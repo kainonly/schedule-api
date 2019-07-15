@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Req, Request } from '@nestjs/common';
 import { ScheduleRepository } from '../repository/schedule.repository';
 
 @Controller('schedule')
@@ -10,8 +10,14 @@ export class ScheduleController {
   }
 
   @Post('get')
-  async get(): Promise<any> {
-    return {};
+  async get(@Req() request: Request): Promise<any> {
+    const param = request.body;
+    console.log(param);
+    const data = await this.scheduleRepository.repository.find();
+    return {
+      error: 0,
+      data,
+    };
   }
 
   @Post('lists')
