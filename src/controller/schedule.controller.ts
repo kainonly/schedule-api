@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Req, Request } from '@nestjs/common';
+import { Controller, Post, Req, Request, UsePipes } from '@nestjs/common';
 import { ScheduleRepository } from '../repository/schedule.repository';
+import { SchemaPipe } from '../common/schema.pipe';
+import { MainSchema } from '../validation/main.schema';
 
 @Controller('schedule')
 export class ScheduleController {
@@ -10,9 +12,9 @@ export class ScheduleController {
   }
 
   @Post('get')
+  @UsePipes(new SchemaPipe(MainSchema.get))
   async get(@Req() request: Request): Promise<any> {
     const param = request.body;
-    console.log(param);
     const data = await this.scheduleRepository.repository.find();
     return {
       error: 0,
