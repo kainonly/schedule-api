@@ -1,27 +1,24 @@
 import * as Joi from 'joi';
-import { string } from 'joi';
 
 export class TaskValidate {
   static get = {
-    id: Joi.number().required(),
+    id: Joi.string().required(),
   };
 
   static lists = {};
 
   static add = {
     job_name: Joi.string().required(),
-    rule: Joi.string().required(),
-    time_zone: string().required(),
+    cron: Joi.string().required(),
   };
 
   static update = {
-    id: Joi.number().required(),
+    id: Joi.string().required(),
     job_name: Joi.string(),
-    rule: Joi.string(),
-    time_zone: string(),
+    cron: Joi.string(),
   };
 
   static delete = {
-    id: Joi.number().required(),
+    id: Joi.string().required(),
   };
 }
