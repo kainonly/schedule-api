@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppModelModule } from './app-model.module';
-import { MainController } from './controller/main.controller';
 import { CronService } from './common/cron.service';
-import { ScheduleController } from './controller/schedule.controller';
+
+import { MainController } from './app/main.controller';
+import { TaskController } from './app/task.controller';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { ScheduleController } from './controller/schedule.controller';
   ],
   controllers: [
     MainController,
-    ScheduleController,
+    TaskController,
   ],
   providers: [
     CronService,

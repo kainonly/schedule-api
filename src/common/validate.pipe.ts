@@ -1,9 +1,11 @@
 import * as Joi from 'joi';
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException, RequestMethod } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 
 @Injectable()
-export class SchemaPipe implements PipeTransform {
-  constructor(private readonly schema: any) {
+export class ValidatePipe implements PipeTransform {
+  constructor(
+    private readonly schema: any,
+  ) {
   }
 
   transform(value: any, metadata: ArgumentMetadata) {

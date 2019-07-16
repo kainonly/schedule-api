@@ -1,20 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { CronJob } from 'cron';
-import { ScheduleRepository } from '../repository/schedule.repository';
+import { Task } from '../database/task.repository';
 
 @Injectable()
-export class CronService {
-  private client: Map<string, CronJob> = new Map();
+export class CronService implements OnApplicationBootstrap {
+  private client: Map<any, CronJob> = new Map();
 
   constructor(
-    private scheduleRepository: ScheduleRepository,
+    private scheduleRepository: Task,
   ) {
-    this.scheduleRepository.repository.find().then(data => {
-      console.log(data);
-    });
-    // const x = new CronJob('* * * * * *', () => {
-    //   // tslint:disable-next-line:no-console
-    //   console.log('RUN');
-    // }, null, true, 'Asia/Shanghai');
+  }
+
+  async onApplicationBootstrap() {
+    // const data = await this.scheduleRepository.repository.find({
+    //   status: 1,
+    // });
+    // for (const x of data) {
+    //   this.client.set(x.id, new CronJob(x.rule, () => {
+    //     // Log
+    //   }, null, true));
+    // }
   }
 }
