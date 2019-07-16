@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ScheduleEntity } from './entity/schedule.entity';
-import { ScheduleRepository } from './repository/schedule.repository';
+import { TaskEntity } from './database/task.entity';
+import { Task } from './database/task.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot({}),
     TypeOrmModule.forFeature([
-      ScheduleEntity,
+      TaskEntity,
     ]),
   ],
   providers: [
-    ScheduleRepository,
+    Task,
   ],
   exports: [
-    ScheduleRepository,
+    Task,
   ],
 })
 export class AppModelModule {
