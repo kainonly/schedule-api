@@ -3,16 +3,18 @@ import { Column, Entity, ObjectIdColumn, ObjectID } from 'typeorm';
 @Entity('task')
 export class TaskEntity {
   @ObjectIdColumn()
-  id?: ObjectID;
+  _id?: ObjectID;
 
   @Column()
   job_name: string;
 
   @Column()
-  rule: string;
+  cron: string;
 
-  @Column()
-  status?: boolean;
+  @Column('boolean', {
+    default: true,
+  })
+  status: boolean;
 
   @Column()
   create_time: Date;

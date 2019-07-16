@@ -2,6 +2,7 @@ import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ValidatePipe } from '../common/validate.pipe';
 import { TaskService } from '../database/task.service';
 import { TaskValidate } from './task.validate';
+import { ObjectID } from 'typeorm';
 
 @Controller('task')
 export class TaskController {
@@ -13,9 +14,7 @@ export class TaskController {
   @Post('get')
   @UsePipes(new ValidatePipe(TaskValidate.get))
   async get(@Body() body: any): Promise<any> {
-    const data = await this.taskService.repository.find({
-      id: body.id,
-    });
+    const data = await this.taskService.repository.findOne(body.id);
     return {
       error: 0,
       data,
@@ -36,8 +35,7 @@ export class TaskController {
   async add(@Body() body: any): Promise<any> {
     const result = await this.taskService.repository.insert({
       job_name: body.job_name,
-      rule: body.rule,
-      time_zone: body.time_zone,
+      cron: body.cron,
       create_time: new Date(),
       update_time: new Date(),
     });
@@ -53,9 +51,7 @@ export class TaskController {
   @Post('update')
   @UsePipes(new ValidatePipe(TaskValidate.update))
   async update(@Body() body: any): Promise<any> {
-    const result = await this.taskService.repository.update({
-      id: body.id,
-    }, body);
+    const result = await this.taskService.repository.update(body.id, body);
     return result ? {
       error: 0,
       msg: 'ok',
@@ -69,7 +65,7 @@ export class TaskController {
   @UsePipes(new ValidatePipe(TaskValidate.delete))
   async delete(@Body() body: any): Promise<any> {
     const result = await this.taskService.repository.delete({
-      id: body.id,
+      _id: body.id,
     });
     return result ? {
       error: 0,
