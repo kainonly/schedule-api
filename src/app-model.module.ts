@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskEntity } from './database/task.entity';
-import { Task } from './database/task.repository';
+import { TaskService } from './database/task.service';
 
 @Module({
   imports: [
@@ -11,10 +11,10 @@ import { Task } from './database/task.repository';
     ]),
   ],
   providers: [
-    Task,
+    TaskService,
   ],
   exports: [
-    Task,
+    TaskService,
   ],
 })
 export class AppModelModule {

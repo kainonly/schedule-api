@@ -12,9 +12,6 @@ export class TaskEntity {
   rule: string;
 
   @Column()
-  time_zone: string;
-
-  @Column()
   status?: boolean;
 
   @Column()
