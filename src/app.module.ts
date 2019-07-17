@@ -1,19 +1,25 @@
 import { Module } from '@nestjs/common';
-import { AppModelModule } from './app-model.module';
 import { CronService } from './common/cron.service';
+import { CurdService } from './common/curd.service';
 
 import { MainController } from './app/main.controller';
 import { TaskController } from './app/task.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TaskEntity } from './database/task.entity';
 
 @Module({
   imports: [
-    AppModelModule,
+    TypeOrmModule.forRoot({}),
+    TypeOrmModule.forFeature([
+      TaskEntity,
+    ]),
   ],
   controllers: [
     MainController,
     TaskController,
   ],
   providers: [
+    CurdService,
     CronService,
   ],
 })
