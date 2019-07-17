@@ -5,13 +5,13 @@ import { CurdService } from './common/curd.service';
 import { MainController } from './app/main.controller';
 import { TaskController } from './app/task.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TaskEntity } from './database/task.entity';
+import { ScriptTaskEntity } from './database/task.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({}),
     TypeOrmModule.forFeature([
-      TaskEntity,
+      ScriptTaskEntity,
     ]),
   ],
   controllers: [

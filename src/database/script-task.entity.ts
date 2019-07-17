@@ -1,7 +1,7 @@
 import { Column, Entity, ObjectIdColumn, ObjectID } from 'typeorm';
 
-@Entity('task')
-export class TaskEntity {
+@Entity('script_task')
+export class ScriptTaskEntity {
   @ObjectIdColumn()
   _id?: ObjectID;
 
@@ -9,10 +9,22 @@ export class TaskEntity {
   job_name: string;
 
   @Column()
-  cron: string;
+  user: string;
 
   @Column()
-  timezone: string;
+  time_out: number;
+
+  @Column()
+  retry: number;
+
+  @Column()
+  interval: number;
+
+  @Column()
+  exclude_node: string[];
+
+  @Column()
+  cron: string[];
 
   @Column()
   status: boolean;
