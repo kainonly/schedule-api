@@ -1,78 +1,137 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
-import { ValidatePipe } from '../common/validate.pipe';
-import { TaskService } from '../database/task.service';
-import { TaskValidate } from './task.validate';
-import { ObjectID } from 'typeorm';
+import { CurdService } from '../common/curd.service';
+import { Validate, V } from '../helper';
 
 @Controller('task')
 export class TaskController {
   constructor(
-    private taskService: TaskService,
+    private curd: CurdService,
   ) {
   }
 
   @Post('get')
-  @UsePipes(new ValidatePipe(TaskValidate.get))
+  @UsePipes(Validate({
+    id: V.string().required(),
+  }))
   async get(@Body() body: any): Promise<any> {
-    const data = await this.taskService.repository.findOne(body.id);
-    return {
-      error: 0,
-      data,
-    };
+    try {
+      const data = await this.curd.task.findOne(body.id);
+      return data ? {
+        error: 0,
+        data,
+      } : {
+        error: 0,
+        data: {},
+      };
+    } catch (e) {
+      return {
+        error: 1,
+        msg: e.toString(),
+      };
+    }
   }
 
   @Post('lists')
+  @UsePipes(Validate({
+    skip: V.number().required(),
+  }))
   async lists(): Promise<any> {
-    const data = await this.taskService.repository.find();
-    return {
-      error: 0,
-      data,
-    };
+    try {
+      const data = await this.curd.task.find({
+        skip: 1,
+        take: 2,
+        order: {
+          create_time: 'DESC',
+        },
+      });
+      return data ? {
+        error: 0,
+        data: {
+          lists: data,
+          total: data.length,
+        },
+      } : {
+        error: 0,
+      };
+    } catch (e) {
+      return {
+        error: 1,
+        msg: e.toString(),
+      };
+    }
   }
 
   @Post('add')
-  @UsePipes(new ValidatePipe(TaskValidate.add))
+  @UsePipes(Validate({
+    job_name: V.string().required(),
+    cron: V.string().required(),
+    status: V.boolean(),
+  }))
   async add(@Body() body: any): Promise<any> {
-    const result = await this.taskService.repository.insert({
-      job_name: body.job_name,
-      cron: body.cron,
-      create_time: new Date(),
-      update_time: new Date(),
-    });
-    return result ? {
-      error: 0,
-      msg: 'ok',
-    } : {
-      error: 1,
-      msg: 'failed',
-    };
+    try {
+      const result = await this.curd.task.insert({
+        job_name: body.job_name,
+        cron: body.cron,
+        status: true,
+        create_time: new Date(),
+        update_time: new Date(),
+      });
+      return result.identifiers.length !== 0 ? {
+        error: 0,
+        msg: 'ok',
+      } : {
+        error: 1,
+        msg: 'failed',
+      };
+    } catch (e) {
+      return {
+        error: 1,
+        msg: e.toString(),
+      };
+    }
   }
 
   @Post('update')
-  @UsePipes(new ValidatePipe(TaskValidate.update))
+  @UsePipes(Validate({
+    id: V.string().required(),
+    job_name: V.string(),
+    cron: V.string(),
+    status: V.boolean(),
+  }))
   async update(@Body() body: any): Promise<any> {
-    const result = await this.taskService.repository.update(body.id, body);
-    return result ? {
-      error: 0,
-      msg: 'ok',
-    } : {
-      error: 1,
-      msg: 'failed',
-    };
+    try {
+      const id = body.id;
+      delete body.id;
+      body.update_time = new Date();
+      await this.curd.task.update(id, body);
+      return {
+        error: 0,
+        msg: 'ok',
+      };
+    } catch (e) {
+      return {
+        error: 1,
+        msg: e.toString(),
+      };
+    }
   }
 
   @Post('delete')
-  @UsePipes(new ValidatePipe(TaskValidate.delete))
+  @UsePipes(Validate({
+    id: V.string().required(),
+  }))
   async delete(@Body() body: any): Promise<any> {
-    const result = await this.taskService.repository.delete({
-      _id: body.id,
-    });
-    return result ? {
-      error: 0,
-      msg: 'ok',
-    } : {
-      error: 1,
-      msg: 'failed',
-    };
+    try {
+      await this.curd.task.delete(body.id);
+      return {
+        error: 0,
+        msg: 'ok',
+      };
+    } catch (e) {
+      return {
+        error: 1,
+        msg: e.toString(),
+      };
+    }
   }
 }

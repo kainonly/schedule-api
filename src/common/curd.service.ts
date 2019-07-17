@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TaskEntity } from '../database/task.entity';
 import { Repository } from 'typeorm';
-import { TaskEntity } from './task.entity';
 
 @Injectable()
-export class TaskService {
+export class CurdService {
   constructor(
     @InjectRepository(TaskEntity)
-    public repository: Repository<TaskEntity>,
+    public readonly task: Repository<TaskEntity>,
   ) {
   }
 }

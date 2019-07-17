@@ -11,9 +11,10 @@ export class TaskEntity {
   @Column()
   cron: string;
 
-  @Column('boolean', {
-    default: true,
-  })
+  @Column()
+  timezone: string;
+
+  @Column()
   status: boolean;
 
   @Column()
