@@ -33,13 +33,17 @@ export class TaskController {
 
   @Post('lists')
   @UsePipes(Validate({
-    skip: V.number().required(),
+    page: {
+      limit: V.number().required(),
+      index: V.number().required(),
+    },
   }))
-  async lists(): Promise<any> {
+  async lists(@Body() body: any): Promise<any> {
     try {
+      const size = await this.curd.task.count();
       const data = await this.curd.task.find({
-        skip: 1,
-        take: 2,
+        take: body.page.limit,
+        skip: body.page.index,
         order: {
           create_time: 'DESC',
         },
@@ -48,10 +52,11 @@ export class TaskController {
         error: 0,
         data: {
           lists: data,
-          total: data.length,
+          total: size,
         },
       } : {
         error: 0,
+        data: {},
       };
     } catch (e) {
       return {
@@ -65,6 +70,7 @@ export class TaskController {
   @UsePipes(Validate({
     job_name: V.string().required(),
     cron: V.string().required(),
+    timezone: V.string().required(),
     status: V.boolean(),
   }))
   async add(@Body() body: any): Promise<any> {
