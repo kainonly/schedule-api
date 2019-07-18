@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 @Controller()
-export class MainController {
+export class IndexController {
   @Get()
   getHealth(): any {
     return {
