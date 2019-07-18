@@ -6,7 +6,7 @@ import { ApiTaskEntity } from '../database/api-task.entity';
 import { QueueTaskEntity } from '../database/queue-task.entity';
 
 @Injectable()
-export class DatabaseService {
+export class DbService {
   constructor(
     @InjectRepository(ScriptTaskEntity)
     public readonly scriptTask: Repository<ScriptTaskEntity>,
