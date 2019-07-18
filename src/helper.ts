@@ -1,6 +1,7 @@
 import * as V from 'joi';
 import { ValidatePipe } from './common/validate.pipe';
 import { FindOneOptions, ObjectID, Repository } from 'typeorm';
+import { Post } from '@nestjs/common';
 
 const Validate = (schema: any) => new ValidatePipe(schema);
 
@@ -41,4 +42,14 @@ const CurdGet = async (repository: Repository<any>, args: CurdGetArgs) => {
   }
 };
 
-export { Validate, V, CurdGet };
+function Curd(): ClassDecorator {
+  return (target: any) => {
+    Reflect.defineProperty(target, 'get', {
+      value() {
+        return true;
+      },
+    });
+  };
+}
+
+export { Validate, V, CurdGet, Curd };

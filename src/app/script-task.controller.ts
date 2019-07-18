@@ -1,25 +1,24 @@
-import { Body, Controller, HttpCode, Post, UsePipes } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { DbService } from '../common/db.service';
-import { Validate, V, CurdGet } from '../helper';
+import { Curd } from '../helper';
 
 @Controller('script-task')
+@Curd()
 export class ScriptTaskController {
   constructor(
     private db: DbService,
   ) {
-    Reflect.deleteProperty(this, 'get');
   }
 
-  @Post('get')
-  @UsePipes(Validate({
-    id: V.string().required(),
-  }))
-  @HttpCode(200)
-  get(@Body() body: any): Promise<any> {
-    return CurdGet(this.db.scriptTask, {
-      id: body.id,
-    });
-  }
+  // @Post('get')
+  // @UsePipes(Validate({
+  //   id: V.string().required(),
+  // }))
+  // get(@Body() body: any): Promise<any> {
+  //   return CurdGet(this.db.scriptTask, {
+  //     id: body.id,
+  //   });
+  // }
 
   // @Post('lists')
   // @UsePipes(Validate({
