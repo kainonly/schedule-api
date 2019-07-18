@@ -1,11 +1,11 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
-import { CurdService } from '../common/curd.service';
+import { DatabaseService } from '../common/database.service';
 import { Validate, V } from '../helper';
 
-@Controller('task')
-export class TaskController {
+@Controller('api-task')
+export class ApiTaskController {
   constructor(
-    private curd: CurdService,
+    private database: DatabaseService,
   ) {
   }
 
@@ -15,7 +15,7 @@ export class TaskController {
   }))
   async get(@Body() body: any): Promise<any> {
     try {
-      const data = await this.curd.task.findOne(body.id);
+      const data = await this.database.apiTask.findOne(body.id);
       return data ? {
         error: 0,
         data,
@@ -40,8 +40,8 @@ export class TaskController {
   }))
   async lists(@Body() body: any): Promise<any> {
     try {
-      const size = await this.curd.task.count();
-      const data = await this.curd.task.find({
+      const size = await this.database.apiTask.count();
+      const data = await this.database.apiTask.find({
         take: body.page.limit,
         skip: body.page.index,
         order: {
@@ -75,7 +75,7 @@ export class TaskController {
   }))
   async add(@Body() body: any): Promise<any> {
     try {
-      const result = await this.curd.task.insert({
+      const result = await this.database.apiTask.insert({
         job_name: body.job_name,
         cron: body.cron,
         status: true,
@@ -109,7 +109,7 @@ export class TaskController {
       const id = body.id;
       delete body.id;
       body.update_time = new Date();
-      await this.curd.task.update(id, body);
+      await this.database.apiTask.update(id, body);
       return {
         error: 0,
         msg: 'ok',
@@ -128,7 +128,7 @@ export class TaskController {
   }))
   async delete(@Body() body: any): Promise<any> {
     try {
-      await this.curd.task.delete(body.id);
+      await this.database.apiTask.delete(body.id);
       return {
         error: 0,
         msg: 'ok',

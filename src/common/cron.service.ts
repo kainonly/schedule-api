@@ -1,13 +1,13 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { CronJob } from 'cron';
-import { CurdService } from './curd.service';
+import { DatabaseService } from './database.service';
 
 @Injectable()
 export class CronService implements OnApplicationBootstrap {
   private client: Map<any, CronJob> = new Map();
 
   constructor(
-    private curd: CurdService,
+    private database: DatabaseService,
   ) {
   }
 
