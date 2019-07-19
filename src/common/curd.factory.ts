@@ -1,4 +1,5 @@
 import { Repository } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
 
 export class CurdFactory {
   constructor(
@@ -10,26 +11,22 @@ export class CurdFactory {
     try {
       const conditions = Reflect.has(body, 'id') ? body.id : body.where;
       const data = await this.repository.findOne(conditions);
-      return data ? {
+      return {
         error: 0,
         data,
-      } : {
-        error: 0,
-        data: {},
       };
     } catch (e) {
-      return {
+      return new BadRequestException({
         error: 1,
         msg: e.toString(),
-      };
+      });
     }
   }
 
   async lists(body: any) {
     try {
-      const conditions = Reflect.has(body, 'where') ? body.where : {};
-      const size = await this.repository.count(conditions);
-      const data = await this.repository.find({
+      const conditions = Reflect.has(body, 'where') ? body.where : null;
+      const [data, size] = await this.repository.findAndCount({
         where: conditions,
         take: body.page.limit,
         skip: body.page.index,
@@ -37,21 +34,18 @@ export class CurdFactory {
           create_time: 'DESC',
         },
       });
-      return data ? {
+      return {
         error: 0,
         data: {
           lists: data,
           total: size,
         },
-      } : {
-        error: 0,
-        data: {},
       };
     } catch (e) {
-      return {
+      return new BadRequestException({
         error: 1,
         msg: e.toString(),
-      };
+      });
     }
   }
 
@@ -62,51 +56,50 @@ export class CurdFactory {
         update_time: new Date(),
       });
       const result = await this.repository.insert(data);
-      return result.identifiers.length !== 0 ? {
+      return {
         error: 0,
-        msg: 'ok',
-      } : {
-        error: 1,
-        msg: 'failed',
+        result: {
+          identifiers: result.identifiers,
+        },
       };
     } catch (e) {
-      return {
+      return new BadRequestException({
         error: 1,
         msg: e.toString(),
-      };
+      });
     }
   }
 
   async edit(body: any) {
     try {
       const id = body.id;
-      delete body.id;
+      Reflect.deleteProperty(body, 'id');
       body.update_time = new Date();
-      await this.repository.update(id, body);
+      const result = await this.repository.update(id, body);
       return {
         error: 0,
-        msg: 'ok',
+        result,
       };
     } catch (e) {
-      return {
+      return new BadRequestException({
         error: 1,
         msg: e.toString(),
-      };
+      });
     }
   }
 
   async delete(body: any) {
     try {
-      await this.repository.delete(body.id);
+      const result = await this.repository.delete(body.id);
       return {
         error: 0,
-        msg: 'ok',
+        result,
       };
     } catch (e) {
-      return {
+      return new BadRequestException({
         error: 1,
         msg: e.toString(),
-      };
+      });
     }
   }
 }
