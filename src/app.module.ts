@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CronService } from './common/cron.service';
-import { DbService } from './common/db.service';
+import { CurdService } from './common/curd.service';
 
 import { IndexController } from './app/index.controller';
 import { ScriptTaskController } from './app/script-task.controller';
@@ -25,7 +25,7 @@ import { QueueTaskEntity } from './database/queue-task.entity';
     ScriptTaskController,
   ],
   providers: [
-    DbService,
+    CurdService,
     CronService,
   ],
 })

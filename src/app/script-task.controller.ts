@@ -1,132 +1,53 @@
-import { Controller } from '@nestjs/common';
-import { DbService } from '../common/db.service';
-import { Curd } from '../helper';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { CurdService } from '../common/curd.service';
+import { V, Validate } from '../helper';
 
 @Controller('script-task')
-@Curd()
 export class ScriptTaskController {
   constructor(
-    private db: DbService,
+    private curd: CurdService,
   ) {
   }
 
-  // @Post('get')
-  // @UsePipes(Validate({
-  //   id: V.string().required(),
-  // }))
-  // get(@Body() body: any): Promise<any> {
-  //   return CurdGet(this.db.scriptTask, {
-  //     id: body.id,
-  //   });
-  // }
+  @Post('get')
+  @UsePipes(CurdService.GetValidate())
+  get(@Body() body: any): Promise<any> {
+    return CurdService.Get(this.curd.scriptTask, body);
+  }
 
-  // @Post('lists')
-  // @UsePipes(Validate({
-  //   page: {
-  //     limit: V.number().required(),
-  //     index: V.number().required(),
-  //   },
-  // }))
-  // async lists(@Body() body: any): Promise<any> {
-  //   try {
-  //     const size = await this.db.scriptTask.count();
-  //     const data = await this.db.scriptTask.find({
-  //       take: body.page.limit,
-  //       skip: body.page.index,
-  //       order: {
-  //         create_time: 'DESC',
-  //       },
-  //     });
-  //     return data ? {
-  //       error: 0,
-  //       data: {
-  //         lists: data,
-  //         total: size,
-  //       },
-  //     } : {
-  //       error: 0,
-  //       data: {},
-  //     };
-  //   } catch (e) {
-  //     return {
-  //       error: 1,
-  //       msg: e.toString(),
-  //     };
-  //   }
-  // }
-  //
-  // @Post('add')
-  // @UsePipes(Validate({
-  //   job_name: V.string().required(),
-  //   cron: V.string().required(),
-  //   timezone: V.string().required(),
-  //   status: V.boolean(),
-  // }))
-  // async add(@Body() body: any): Promise<any> {
-  //   try {
-  //     const result = await this.db.scriptTask.insert({
-  //       job_name: body.job_name,
-  //       cron: body.cron,
-  //       status: true,
-  //       create_time: new Date(),
-  //       update_time: new Date(),
-  //     });
-  //     return result.identifiers.length !== 0 ? {
-  //       error: 0,
-  //       msg: 'ok',
-  //     } : {
-  //       error: 1,
-  //       msg: 'failed',
-  //     };
-  //   } catch (e) {
-  //     return {
-  //       error: 1,
-  //       msg: e.toString(),
-  //     };
-  //   }
-  // }
-  //
-  // @Post('update')
-  // @UsePipes(Validate({
-  //   id: V.string().required(),
-  //   job_name: V.string(),
-  //   cron: V.string(),
-  //   status: V.boolean(),
-  // }))
-  // async update(@Body() body: any): Promise<any> {
-  //   try {
-  //     const id = body.id;
-  //     delete body.id;
-  //     body.update_time = new Date();
-  //     await this.db.scriptTask.update(id, body);
-  //     return {
-  //       error: 0,
-  //       msg: 'ok',
-  //     };
-  //   } catch (e) {
-  //     return {
-  //       error: 1,
-  //       msg: e.toString(),
-  //     };
-  //   }
-  // }
-  //
-  // @Post('delete')
-  // @UsePipes(Validate({
-  //   id: V.string().required(),
-  // }))
-  // async delete(@Body() body: any): Promise<any> {
-  //   try {
-  //     await this.db.scriptTask.delete(body.id);
-  //     return {
-  //       error: 0,
-  //       msg: 'ok',
-  //     };
-  //   } catch (e) {
-  //     return {
-  //       error: 1,
-  //       msg: e.toString(),
-  //     };
-  //   }
-  // }
+  @Post('lists')
+  @UsePipes(CurdService.ListsValidate())
+  async lists(@Body() body: any): Promise<any> {
+    return CurdService.Lists(this.curd.scriptTask, body);
+  }
+
+  @Post('add')
+  @UsePipes(Validate({
+    job_name: V.string().required(),
+    cron: V.string().required(),
+    status: V.boolean(),
+  }))
+  async add(@Body() body: any): Promise<any> {
+    return CurdService.Add(this.curd.scriptTask, {
+      job_name: body.job_name,
+      cron: body.cron,
+      status: true,
+    });
+  }
+
+  @Post('edit')
+  @UsePipes(CurdService.EditValidate({
+    job_name: V.string(),
+    cron: V.string(),
+    status: V.boolean(),
+  }))
+  async edit(@Body() body: any): Promise<any> {
+    return CurdService.Edit(this.curd.scriptTask, body);
+  }
+
+  @Post('delete')
+  @UsePipes(CurdService.DeleteValidate())
+  async delete(@Body() body: any): Promise<any> {
+    return CurdService.Delete(this.curd.scriptTask, body);
+  }
 }
