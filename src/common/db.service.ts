@@ -7,7 +7,7 @@ import { ApiTaskEntity } from '../database/api-task.entity';
 import { QueueTaskEntity } from '../database/queue-task.entity';
 
 @Injectable()
-export class DatabaseService {
+export class DbService {
   static Curd(repository: Repository<any>) {
     return new CurdFactory(repository);
   }

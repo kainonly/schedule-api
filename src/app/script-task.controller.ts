@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
-import { DatabaseService } from '../common/database.service';
+import { DbService } from '../common/db.service';
 import { CurdFactory } from '../common/curd.factory';
 import { DeleteValidate, EditValidate, GetValidate, ListsValidate, V, Validate } from '../helper';
 
@@ -8,9 +8,9 @@ export class ScriptTaskController {
   private curd: CurdFactory;
 
   constructor(
-    private db: DatabaseService,
+    private db: DbService,
   ) {
-    this.curd = DatabaseService.Curd(db.scriptTask);
+    this.curd = DbService.Curd(db.scriptTask);
   }
 
   @Post('get')
