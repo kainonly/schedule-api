@@ -8,8 +8,8 @@ export class CurdFactory {
 
   async get(body: any) {
     try {
-      const condition = Reflect.has(body, 'id') ? body.id : body.where;
-      const data = await this.repository.findOne(condition);
+      const conditions = Reflect.has(body, 'id') ? body.id : body.where;
+      const data = await this.repository.findOne(conditions);
       return data ? {
         error: 0,
         data,
@@ -27,8 +27,10 @@ export class CurdFactory {
 
   async lists(body: any) {
     try {
-      const size = await this.repository.count();
+      const conditions = Reflect.has(body, 'where') ? body.where : {};
+      const size = await this.repository.count(conditions);
       const data = await this.repository.find({
+        where: conditions,
         take: body.page.limit,
         skip: body.page.index,
         order: {
