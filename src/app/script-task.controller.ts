@@ -1,24 +1,28 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
-import { CurdService } from '../common/curd.service';
-import { V, Validate } from '../helper';
+import { DatabaseService } from '../common/database.service';
+import { CurdFactory } from '../common/curd.factory';
+import { DeleteValidate, EditValidate, GetValidate, ListsValidate, V, Validate } from '../helper';
 
 @Controller('script-task')
 export class ScriptTaskController {
+  private curd: CurdFactory;
+
   constructor(
-    private curd: CurdService,
+    private db: DatabaseService,
   ) {
+    this.curd = DatabaseService.Curd(db.scriptTask);
   }
 
   @Post('get')
-  @UsePipes(CurdService.GetValidate())
+  @UsePipes(GetValidate())
   get(@Body() body: any): Promise<any> {
-    return CurdService.Get(this.curd.scriptTask, body);
+    return this.curd.get(body);
   }
 
   @Post('lists')
-  @UsePipes(CurdService.ListsValidate())
+  @UsePipes(ListsValidate())
   async lists(@Body() body: any): Promise<any> {
-    return CurdService.Lists(this.curd.scriptTask, body);
+    return this.curd.lists(body);
   }
 
   @Post('add')
@@ -28,7 +32,7 @@ export class ScriptTaskController {
     status: V.boolean(),
   }))
   async add(@Body() body: any): Promise<any> {
-    return CurdService.Add(this.curd.scriptTask, {
+    return this.curd.add({
       job_name: body.job_name,
       cron: body.cron,
       status: true,
@@ -36,18 +40,18 @@ export class ScriptTaskController {
   }
 
   @Post('edit')
-  @UsePipes(CurdService.EditValidate({
+  @UsePipes(EditValidate({
     job_name: V.string(),
     cron: V.string(),
     status: V.boolean(),
   }))
   async edit(@Body() body: any): Promise<any> {
-    return CurdService.Edit(this.curd.scriptTask, body);
+    return this.curd.edit(body);
   }
 
   @Post('delete')
-  @UsePipes(CurdService.DeleteValidate())
+  @UsePipes(DeleteValidate())
   async delete(@Body() body: any): Promise<any> {
-    return CurdService.Delete(this.curd.scriptTask, body);
+    return this.curd.delete(body);
   }
 }
