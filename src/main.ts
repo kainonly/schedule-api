@@ -9,5 +9,5 @@ NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
 ).then(async (app) => {
-  await app.listen(3000);
+  await app.listen(3000, '0.0.0.0');
 });

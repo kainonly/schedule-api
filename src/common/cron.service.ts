@@ -6,6 +6,9 @@ export class CronService implements OnApplicationBootstrap {
   private client: Map<any, CronJob> = new Map();
 
   async onApplicationBootstrap() {
+    // const x = new CronJob('*/5 * * * * *', () => {
+    //   console.log('run');
+    // }, null, true);
     // const data = await this.scheduleRepository.repository.find({
     //   status: 1,
     // });
