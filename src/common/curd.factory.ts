@@ -91,6 +91,7 @@ export class CurdFactory {
   async delete(body: any) {
     try {
       const result = await this.repository.delete(body.id);
+      console.log(result);
       return {
         error: 0,
         result,
