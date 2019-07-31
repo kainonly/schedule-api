@@ -11,7 +11,7 @@ const ValidateTypeOfGet = (schema?: any) => Validate(Object.assign({
   },
 }, schema));
 
-const ValidateTypeLists = (schema?: any) => Validate(Object.assign({
+const ValidateTypeOfLists = (schema?: any) => Validate(Object.assign({
   required: ['where', 'page'],
   properties: {
     where: {
@@ -23,7 +23,7 @@ const ValidateTypeLists = (schema?: any) => Validate(Object.assign({
   },
 }, schema));
 
-const EditValidate = (schema?: any) => Validate(Object.assign({
+const ValidateTypeOfEdit = (schema?: any) => Validate(Object.assign({
   required: ['id'],
   properties: {
     id: {
@@ -32,7 +32,7 @@ const EditValidate = (schema?: any) => Validate(Object.assign({
   },
 }, schema));
 
-const DeleteValidate = (schema?: any) => Validate(Object.assign({
+const ValidateTypeOfDelete = (schema?: any) => Validate(Object.assign({
   required: ['id'],
   properties: {
     id: {
@@ -41,4 +41,10 @@ const DeleteValidate = (schema?: any) => Validate(Object.assign({
   },
 }, schema));
 
-export { Validate, ValidateTypeOfGet, ValidateTypeLists, EditValidate, DeleteValidate };
+export {
+  Validate,
+  ValidateTypeOfGet,
+  ValidateTypeOfLists,
+  ValidateTypeOfEdit,
+  ValidateTypeOfDelete,
+};
