@@ -1,35 +1,26 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DbModule } from './database/db.module';
 
-import { CronService } from './common/cron.service';
+import { FacadeService } from './common/facade.service';
 import { DbService } from './common/db.service';
+import { CronService } from './common/cron.service';
 
-import { IndexController } from './app/index.controller';
-import { ScriptTaskController } from './app/script-task.controller';
-
-import { ScriptTaskEntity } from './database/script-task.entity';
-import { ApiTaskEntity } from './database/api-task.entity';
-import { QueueTaskEntity } from './database/queue-task.entity';
-import { ApiTaskController } from './app/api-task.controller';
-import { QueueTaskController } from './app/queue-task.controller';
+import { MainController } from './api/main.controller';
+import { ScriptTaskController } from './api/script-task.controller';
+import { ApiTaskController } from './api/api-task.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
-    TypeOrmModule.forFeature([
-      ScriptTaskEntity,
-      ApiTaskEntity,
-      QueueTaskEntity,
-    ]),
+    DbModule,
   ],
   controllers: [
-    IndexController,
+    MainController,
     ScriptTaskController,
     ApiTaskController,
-    QueueTaskController,
   ],
   providers: [
     DbService,
+    FacadeService,
     CronService,
   ],
 })
