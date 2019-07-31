@@ -28,6 +28,14 @@ export class ScriptTaskController {
   @Post('add')
   @UsePipes(Validate({
     required: ['job_name', 'status'],
+    properties: {
+      job_name: {
+        type: 'string',
+      },
+      status: {
+        type: 'bool',
+      },
+    },
   }))
   async add(@Body() body: any): Promise<any> {
     return this.curd.add({
@@ -39,6 +47,14 @@ export class ScriptTaskController {
   @Post('edit')
   @UsePipes(ValidateTypeOfEdit({
     required: ['job_name', 'status'],
+    properties: {
+      job_name: {
+        type: 'string',
+      },
+      status: {
+        type: 'bool',
+      },
+    },
   }))
   async edit(@Body() body: any): Promise<any> {
     return this.curd.edit(body);
