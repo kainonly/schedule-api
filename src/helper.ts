@@ -1,40 +1,44 @@
 import { ValidatePipe } from './common/validate.pipe';
 
-const validate = (schema: any) => new ValidatePipe(schema);
+const Validate = (schema: any) => new ValidatePipe(schema);
 
-const validateTypeOfGet = (schema?: any) => {
-  return validate({
-    properties: {
-      id: {
-        type: 'number',
-      },
-      where: {
-        type: 'object',
-      },
+const ValidateTypeOfGet = (schema?: any) => Validate(Object.assign({
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'number',
     },
-  });
-};
+  },
+}, schema));
 
-// const ListsValidate = (schema?: any) => {
-//   return Validate(Object.assign({
-//     where: V.object(),
-//     page: {
-//       limit: V.number().required(),
-//       index: V.number().required(),
-//     },
-//   }, schema));
-// };
-//
-// const EditValidate = (schema?: any) => {
-//   return Validate(Object.assign({
-//     id: V.string().required(),
-//   }, schema));
-// };
-//
-// const DeleteValidate = (schema?: any) => {
-//   return Validate(Object.assign({
-//     id: V.string().required(),
-//   }, schema));
-// };
+const ValidateTypeLists = (schema?: any) => Validate(Object.assign({
+  required: ['where', 'page'],
+  properties: {
+    where: {
+      type: 'array',
+    },
+    page: {
+      type: 'object',
+    },
+  },
+}, schema));
 
-export { validate, validateTypeOfGet };
+const EditValidate = (schema?: any) => Validate(Object.assign({
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'number',
+    },
+  },
+}, schema));
+
+const DeleteValidate = (schema?: any) => Validate(Object.assign({
+  required: ['id'],
+  properties: {
+    id: {
+      type: 'number',
+    },
+  },
+}, schema));
+
+export { Validate, ValidateTypeOfGet, ValidateTypeLists, EditValidate, DeleteValidate };
