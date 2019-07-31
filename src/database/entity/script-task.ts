@@ -1,7 +1,7 @@
 import { Column, Entity, ObjectIdColumn, ObjectID } from 'typeorm';
 
-@Entity('api_task')
-export class ApiTaskEntity {
+@Entity()
+export class ScriptTask {
   @ObjectIdColumn()
   _id?: ObjectID;
 

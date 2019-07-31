@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository } from 'typeorm';
 import { CurdFactory } from './curd.factory';
-import { ScriptTaskEntity } from '../database/script-task.entity';
-import { ApiTaskEntity } from '../database/api-task.entity';
-import { QueueTaskEntity } from '../database/queue-task.entity';
+import { ScriptTask } from '../database/entity/script-task';
+import { ApiTask } from '../database/entity/api-task';
 
 @Injectable()
 export class DbService {
@@ -13,13 +12,12 @@ export class DbService {
   }
 
   constructor(
-    @InjectRepository(ScriptTaskEntity)
-    public readonly scriptTask: Repository<ScriptTaskEntity>,
-    @InjectRepository(ApiTaskEntity)
-    public readonly apiTask: Repository<ApiTaskEntity>,
-    @InjectRepository(QueueTaskEntity)
-    public readonly queueTask: Repository<QueueTaskEntity>,
+    @InjectConnection()
+    public readonly connection: Connection,
+    @InjectRepository(ScriptTask)
+    public readonly scriptTask: Repository<ScriptTask>,
+    @InjectRepository(ApiTask)
+    public readonly apiTask: Repository<ApiTask>,
   ) {
   }
-
 }
