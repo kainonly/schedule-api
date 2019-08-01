@@ -6,8 +6,6 @@ import { DbService } from './common/db.service';
 import { CronService } from './common/cron.service';
 
 import { MainController } from './api/main.controller';
-import { ScriptTaskController } from './api/script-task.controller';
-import { ApiTaskController } from './api/api-task.controller';
 
 @Module({
   imports: [
@@ -15,8 +13,6 @@ import { ApiTaskController } from './api/api-task.controller';
   ],
   controllers: [
     MainController,
-    ScriptTaskController,
-    ApiTaskController,
   ],
   providers: [
     DbService,
