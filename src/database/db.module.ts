@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScriptTask } from './entity/script-task';
-import { ApiTask } from './entity/api-task';
+import { Task } from './entity/api-task';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
     TypeOrmModule.forFeature([
       ScriptTask,
-      ApiTask,
+      Task,
     ]),
   ],
   exports: [TypeOrmModule],

@@ -1,5 +1,5 @@
 {
-  "name": "van-schedule-api",
+  "name": "van-box-api",
   "version": "1.0.0",
   "scripts": {
     "start": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
@@ -33,7 +33,6 @@
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
     "typescript": "3.4.3",
-    "typescript-json-schema": "^0.39.0",
     "wait-on": "^3.2.0"
   },
   "author": {
