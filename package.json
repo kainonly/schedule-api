@@ -5,7 +5,7 @@
     "start": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:prod": "node dist/main.js",
     "build": "tsc -p tsconfig.build.json",
-    "schema:sync": "typeorm schema:sync",
+    "schema:sync": "npm run build && typeorm schema:sync",
     "taskkill": "taskkill /fi \"imagename eq node.exe\" /f"
   },
   "dependencies": {
