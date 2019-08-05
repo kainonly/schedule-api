@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class Base {
   @PrimaryGeneratedColumn()
@@ -6,6 +6,7 @@ export abstract class Base {
 
   @Column('tinyint', {
     default: 1,
+    width: 1,
     unsigned: true,
     comment: '状态',
   })
