@@ -1,24 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from './database/db.module';
-
-import { FacadeService } from './common/facade.service';
-import { DbService } from './common/db.service';
-import { CronService } from './common/cron.service';
-
-import { MainController } from './api/main.controller';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
-  imports: [
-    DbModule,
-  ],
-  controllers: [
-    MainController,
-  ],
-  providers: [
-    DbService,
-    FacadeService,
-    CronService,
-  ],
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}
