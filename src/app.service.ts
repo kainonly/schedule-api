@@ -7,7 +7,7 @@ export class AppService {
   private jobs: Map<string, CronJob> = new Map<string, CronJob>();
 
   get(identity: string): any {
-    if (!this.runtime.has(identity)) {
+    if (!this.jobs.has(identity)) {
       return false;
     }
     const job = this.jobs.get(identity);
@@ -16,5 +16,34 @@ export class AppService {
       nextDate: job.nextDate(),
       lastDate: job.lastDate(),
     });
+  }
+
+  delete(identity: string): boolean {
+    if (!this.jobs.has(identity)) {
+      return true;
+    }
+    this.jobs.get(identity).stop();
+    return (
+      this.jobs.delete(identity) &&
+      this.runtime.delete(identity)
+    );
+  }
+
+  start(identity: string): boolean {
+    if (!this.jobs.has(identity)) {
+      return false;
+    }
+    const job = this.jobs.get(identity);
+    job.start();
+    return job.running;
+  }
+
+  stop(identity: string): boolean {
+    if (!this.jobs.has(identity)) {
+      return false;
+    }
+    const job = this.jobs.get(identity);
+    job.stop();
+    return job.running;
   }
 }
