@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
 import * as process from 'process';
 import { execSync } from 'child_process';
-import { Runtime } from '../types/runtime';
+import { JobsParams } from '../common/jobs-params';
 
 @Injectable()
-export class AppService {
-  private runtime: Map<string, Runtime> = new Map<string, Runtime>();
+export class JobsService {
+  private runtime: Map<string, JobsParams> = new Map<string, JobsParams>();
   private jobs: Map<string, CronJob> = new Map<string, CronJob>();
 
   constructor() {
@@ -14,22 +14,6 @@ export class AppService {
       console.log(this.runtime);
       console.log(this.jobs);
     });
-  }
-
-  create(runtime: Runtime) {
-    this.runtime.set(runtime.identity, runtime);
-    const cronJob = new CronJob(runtime.cronTime, () => {
-      console.log('asdas');
-      // try {
-      //   console.log(runtime.identity);
-      //   const output = execSync(runtime.bash);
-      //   console.log(output);
-      // } catch (e) {
-      //   console.log(e);
-      // }
-    }, null, runtime.start, runtime.timeZone);
-    this.jobs.set(runtime.identity, cronJob);
-    return this.runtime.has(runtime.identity) && this.jobs.has(runtime.identity);
   }
 
   get(identity: string): any {
@@ -42,6 +26,23 @@ export class AppService {
       nextDate: job.nextDate(),
       lastDate: job.lastDate(),
     });
+  }
+
+  put(jobsParams: JobsParams) {
+    if (this.runtime.has(jobsParams.identity)) {
+      this.delete(jobsParams.identity);
+    }
+    this.runtime.set(jobsParams.identity, jobsParams);
+    const cronJob = new CronJob(jobsParams.time, () => {
+      try {
+        const output = execSync(jobsParams.bash);
+        console.log(output.toString());
+      } catch (e) {
+        console.log(e);
+      }
+    }, null, jobsParams.start, jobsParams.zone);
+    this.jobs.set(jobsParams.identity, cronJob);
+    return this.runtime.has(jobsParams.identity) && this.jobs.has(jobsParams.identity);
   }
 
   delete(identity: string): boolean {
