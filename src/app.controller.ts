@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { JobsService } from './service/jobs.service';
 import { ValidationPipe } from './common/validation.pipe';
 
@@ -9,12 +9,24 @@ export class AppController {
   ) {
   }
 
-  @Get('lists')
-  lists() {
-    return [];
+  @Post('lists')
+  @UsePipes(new ValidationPipe({
+    required: ['identity'],
+    properties: {
+      identity: {
+        type: 'array',
+      },
+    },
+  }))
+  lists(@Body() body: any) {
+    const lists = body.identity.map(v => this.jobsService.get(v));
+    return {
+      error: 0,
+      data: lists,
+    };
   }
 
-  @Get('get')
+  @Post('get')
   @UsePipes(new ValidationPipe({
     required: ['identity'],
     properties: {
@@ -23,8 +35,8 @@ export class AppController {
       },
     },
   }))
-  get(@Query() query: any) {
-    const result = this.jobsService.get(query.identity);
+  get(@Body() body: any) {
+    const result = this.jobsService.get(body.identity);
     return result ? {
       error: 0,
       data: result,
@@ -36,7 +48,7 @@ export class AppController {
 
   @Post('put')
   @UsePipes(new ValidationPipe({
-    required: ['identity', 'time', 'bash'],
+    required: ['identity', 'time', 'bash', 'start', 'zone'],
     properties: {
       identity: {
         type: 'string',
@@ -45,6 +57,12 @@ export class AppController {
         type: 'string',
       },
       bash: {
+        type: 'string',
+      },
+      start: {
+        type: 'boolean',
+      },
+      zone: {
         type: 'string',
       },
     },
@@ -61,12 +79,47 @@ export class AppController {
   }
 
   @Post('delete')
+  @UsePipes(new ValidationPipe({
+    required: ['identity'],
+    properties: {
+      identity: {
+        type: 'string',
+      },
+    },
+  }))
   delete(@Body() body: any) {
-    return [];
+    const result = this.jobsService.delete(body.identity);
+    return result ? {
+      error: 0,
+      msg: 'ok',
+    } : {
+      error: 1,
+      msg: 'failed',
+    };
   }
 
   @Post('status')
+  @UsePipes(new ValidationPipe({
+    required: ['identity', 'status'],
+    properties: {
+      identity: {
+        type: 'string',
+      },
+      status: {
+        type: 'boolean',
+      },
+    },
+  }))
   status(@Body() body: any) {
-    return [];
+    const result = body.status ?
+      this.jobsService.start(body.identity) :
+      this.jobsService.stop(body.identity);
+    return result ? {
+      error: 0,
+      msg: 'ok',
+    } : {
+      error: 1,
+      msg: 'failed',
+    };
   }
 }
