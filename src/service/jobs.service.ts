@@ -16,6 +16,10 @@ export class JobsService {
     });
   }
 
+  /**
+   * get job
+   * @param identity
+   */
   get(identity: string): any {
     if (!this.jobs.has(identity)) {
       return false;
@@ -28,6 +32,10 @@ export class JobsService {
     });
   }
 
+  /**
+   * add or update job
+   * @param jobsParams
+   */
   put(jobsParams: JobsParams) {
     if (this.runtime.has(jobsParams.identity)) {
       this.delete(jobsParams.identity);
@@ -45,6 +53,10 @@ export class JobsService {
     return this.runtime.has(jobsParams.identity) && this.jobs.has(jobsParams.identity);
   }
 
+  /**
+   * delete job
+   * @param identity
+   */
   delete(identity: string): boolean {
     if (!this.jobs.has(identity)) {
       return true;
@@ -56,6 +68,10 @@ export class JobsService {
     );
   }
 
+  /**
+   * start job
+   * @param identity
+   */
   start(identity: string): boolean {
     if (!this.jobs.has(identity)) {
       return false;
@@ -65,6 +81,10 @@ export class JobsService {
     return job.running;
   }
 
+  /**
+   * stop job
+   * @param identity
+   */
   stop(identity: string): boolean {
     if (!this.jobs.has(identity)) {
       return false;
