@@ -4,7 +4,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import * as fastifyCompress from 'fastify-compress';
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 
 NestFactory.create<NestFastifyApplication>(
   AppModule,
