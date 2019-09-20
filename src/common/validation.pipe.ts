@@ -2,7 +2,7 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 import * as Ajv from 'ajv';
 
 @Injectable()
-export class AppValidation implements PipeTransform {
+export class ValidationPipe implements PipeTransform {
   constructor(
     private readonly schema: any,
   ) {
