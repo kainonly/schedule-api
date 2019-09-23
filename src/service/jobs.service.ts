@@ -8,10 +8,16 @@ export class JobsService {
   private runtime: Map<string, JobsParams> = new Map<string, JobsParams>();
   private jobs: Map<string, CronJob> = new Map<string, CronJob>();
 
+  /**
+   * get runtime map
+   */
   getRunTime() {
     return this.runtime;
   }
 
+  /**
+   * get jobs map
+   */
   getJobs() {
     return this.jobs;
   }
