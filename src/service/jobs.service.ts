@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
-import * as process from 'process';
 import { execSync } from 'child_process';
 import { JobsParams } from '../common/jobs-params';
 
@@ -9,11 +8,12 @@ export class JobsService {
   private runtime: Map<string, JobsParams> = new Map<string, JobsParams>();
   private jobs: Map<string, CronJob> = new Map<string, CronJob>();
 
-  constructor() {
-    process.on('exit', () => {
-      console.log(this.runtime);
-      console.log(this.jobs);
-    });
+  getRunTime() {
+    return this.runtime;
+  }
+
+  getJobs() {
+    return this.jobs;
   }
 
   /**
