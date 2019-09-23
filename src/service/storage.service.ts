@@ -9,6 +9,7 @@ export class StorageService {
 
   constructor() {
     this.database = new PouchDB('../schedule-logs');
+    console.log(this.database);
   }
 
   async add(params: LogsParams) {

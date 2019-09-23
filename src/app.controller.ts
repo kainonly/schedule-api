@@ -1,19 +1,19 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, OnApplicationShutdown, Post, UsePipes } from '@nestjs/common';
 import { JobsService } from './service/jobs.service';
 import { ValidationPipe } from './common/validation.pipe';
 import { StorageService } from './service/storage.service';
-import * as process from 'process';
 
 @Controller()
-export class AppController {
+export class AppController implements OnApplicationShutdown {
   constructor(
     private readonly jobsService: JobsService,
     private readonly storageService: StorageService,
   ) {
-    process.on('exit', () => {
-      console.log(jobsService.getRunTime());
-      console.log(jobsService.getJobs());
-    });
+  }
+
+  onApplicationShutdown(signal?: string): any {
+    console.log(this.jobsService.getRunTime());
+    console.log(this.jobsService.getJobs());
   }
 
   @Post('lists')
