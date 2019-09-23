@@ -1,6 +1,6 @@
 import { Body, Controller, OnModuleInit, Post, UsePipes } from '@nestjs/common';
-import { JobsService } from './service/jobs.service';
 import { ValidationPipe } from './common/validation.pipe';
+import { JobsService } from './service/jobs.service';
 import { StorageService } from './service/storage.service';
 
 @Controller()
@@ -12,8 +12,8 @@ export class AppController implements OnModuleInit {
   }
 
   onModuleInit(): any {
-    this.storageService.get('jobs').then(data => {
-      console.log(data);
+    this.storageService.get('runtime').then(response => {
+      console.log(response);
     });
   }
 
@@ -77,13 +77,12 @@ export class AppController implements OnModuleInit {
   }))
   async put(@Body() body: any) {
     const result = this.jobsService.put(body);
-    await this.storageService.push({
+    await this.storageService.logging({
       type: 'put',
       raws: body,
       status: result,
       createTime: new Date(),
     });
-    this.update();
     return result ? {
       error: 0,
       msg: 'ok',
@@ -104,13 +103,12 @@ export class AppController implements OnModuleInit {
   }))
   async delete(@Body() body: any) {
     const result = this.jobsService.delete(body.identity);
-    await this.storageService.push({
+    await this.storageService.logging({
       type: 'delete',
       raws: body,
       status: result,
       createTime: new Date(),
     });
-    this.update();
     return result ? {
       error: 0,
       msg: 'ok',
@@ -138,31 +136,16 @@ export class AppController implements OnModuleInit {
     } else {
       this.jobsService.stop(body.identity);
     }
-    await this.storageService.push({
+    await this.storageService.logging({
       type: 'status',
       raws: body,
       status: true,
       createTime: new Date(),
     });
-    this.update();
     return {
       error: 0,
       msg: 'ok',
     };
   }
 
-  private update() {
-    this.storageService.add({
-      _id: 'jobs',
-      data: this.jobsService.getJobs(),
-    }).then(() => {
-      console.log('save jobs!');
-    });
-    this.storageService.add({
-      _id: 'runtime',
-      data: this.jobsService.getRunTime(),
-    }).then(() => {
-      console.log('save runtime!');
-    });
-  }
 }
