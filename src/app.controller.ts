@@ -83,6 +83,7 @@ export class AppController implements OnModuleInit {
       status: result,
       createTime: new Date(),
     });
+    await this.pauseRuntime();
     return result ? {
       error: 0,
       msg: 'ok',
@@ -109,6 +110,7 @@ export class AppController implements OnModuleInit {
       status: result,
       createTime: new Date(),
     });
+    await this.pauseRuntime();
     return result ? {
       error: 0,
       msg: 'ok',
@@ -146,6 +148,14 @@ export class AppController implements OnModuleInit {
       error: 0,
       msg: 'ok',
     };
+  }
+
+  private async pauseRuntime() {
+    try {
+      return await this.storageService.add('runtime', [...this.jobsService.getRunTime()]);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
 }
