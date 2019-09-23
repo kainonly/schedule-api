@@ -16,13 +16,6 @@ export class JobsService {
   }
 
   /**
-   * get jobs map
-   */
-  getJobs() {
-    return this.jobs;
-  }
-
-  /**
    * get job
    * @param identity
    */
