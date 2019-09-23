@@ -11,6 +11,5 @@ NestFactory.create<NestFastifyApplication>(
   new FastifyAdapter(),
 ).then(async (app) => {
   app.register(fastifyCompress);
-  app.enableShutdownHooks();
   await app.listen(3000);
 });
