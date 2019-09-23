@@ -1,12 +1,19 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { JobsService } from './service/jobs.service';
 import { ValidationPipe } from './common/validation.pipe';
+import { StorageService } from './service/storage.service';
+import * as process from 'process';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly jobsService: JobsService,
+    private readonly storageService: StorageService,
   ) {
+    process.on('exit', () => {
+      console.log(jobsService.getRunTime());
+      console.log(jobsService.getJobs());
+    });
   }
 
   @Post('lists')
@@ -67,8 +74,14 @@ export class AppController {
       },
     },
   }))
-  put(@Body() body: any) {
+  async put(@Body() body: any) {
     const result = this.jobsService.put(body);
+    await this.storageService.add({
+      type: 'put',
+      raws: body,
+      status: result,
+      createTime: new Date(),
+    });
     return result ? {
       error: 0,
       msg: 'ok',
@@ -87,8 +100,14 @@ export class AppController {
       },
     },
   }))
-  delete(@Body() body: any) {
+  async delete(@Body() body: any) {
     const result = this.jobsService.delete(body.identity);
+    await this.storageService.add({
+      type: 'delete',
+      raws: body,
+      status: result,
+      createTime: new Date(),
+    });
     return result ? {
       error: 0,
       msg: 'ok',
@@ -110,10 +129,16 @@ export class AppController {
       },
     },
   }))
-  status(@Body() body: any) {
+  async status(@Body() body: any) {
     const result = body.status ?
       this.jobsService.start(body.identity) :
       this.jobsService.stop(body.identity);
+    await this.storageService.add({
+      type: 'status',
+      raws: body,
+      status: result,
+      createTime: new Date(),
+    });
     return result ? {
       error: 0,
       msg: 'ok',
