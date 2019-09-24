@@ -7,9 +7,9 @@ import { RuntimeOption } from '../common/runtime-option';
 
 @Injectable()
 export class JobsService {
+  runtime: Subject<RuntimeOption> = new Subject<RuntimeOption>();
   private jobs: { [key: string]: JobParam } = {};
   private cronJobs: Map<string, CronJob> = new Map<string, CronJob>();
-  runtime: Subject<RuntimeOption> = new Subject<RuntimeOption>();
 
   /**
    * get jobs objects
@@ -27,7 +27,7 @@ export class JobsService {
       return false;
     }
     const job = this.cronJobs.get(identity);
-    return Object.assign(this.jobs.hasOwnProperty(identity), {
+    return Object.assign(this.jobs[identity], {
       running: job.running,
       nextDate: job.nextDate(),
       lastDate: job.lastDate(),
