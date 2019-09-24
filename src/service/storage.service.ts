@@ -24,6 +24,8 @@ export class StorageService {
       if (response.result === 'created') {
         console.debug('index create success!');
       }
+    }).catch(error => {
+      console.log(error);
     });
   }
 

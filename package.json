@@ -5,17 +5,14 @@
   "author": "kain",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
-    "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
-    "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main.js\"",
-    "start:prod": "node dist/main.js"
+    "start": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "build": "webpack",
+    "prod": "node dist/server.js"
   },
   "dependencies": {
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
-    "@nestjs/platform-fastify": "^6.7.1",
+    "@nestjs/platform-fastify": "^6.7.2",
     "ajv": "^6.10.2",
     "cron": "^1.7.2",
     "fastify-compress": "^0.11.0",
@@ -30,12 +27,15 @@
     "@types/cron": "^1.7.1",
     "@types/node": "11.13.4",
     "@types/pouchdb": "^6.4.0",
-    "@types/uuid": "^3.4.5",
     "prettier": "1.17.0",
+    "ts-loader": "^6.1.2",
     "ts-node": "8.1.0",
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
-    "typescript": "3.4.3"
+    "typescript": "3.4.3",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-node-externals": "^1.7.2"
   }
 }

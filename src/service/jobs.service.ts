@@ -57,10 +57,10 @@ export class JobsService {
           output: execSync(jobParam.bash).toString(),
         });
       } catch (e) {
-        appendFileSync(
-          this.configService.schduleLogs + '/error.log',
-          '[' + jobParam.identity + ':' + new Date() + ']\n' + e.message,
-        );
+        // appendFileSync(
+        //   this.configService.schduleLogs + '/error.log',
+        //   '[' + jobParam.identity + ':' + new Date() + ']\n' + e.message,
+        // );
         this.stop(jobParam.identity);
       }
     }, null, jobParam.start, jobParam.zone);

@@ -31,6 +31,8 @@ export class AppController implements OnModuleInit {
           this.jobsService.put(data[key]);
         }
       }
+    }).catch(error => {
+      console.log(error);
     });
   }
 
