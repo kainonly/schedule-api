@@ -1,14 +1,27 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { LogParam } from '../common/log-param';
 import * as PouchDB from 'pouchdb';
+import * as PouchDBFind from 'pouchdb-find';
 
 @Injectable()
 export class StorageService {
   private database: PouchDB.Database;
 
   constructor() {
-    this.database = new PouchDB('../schedule-logs', {
-      adapter: 'leveldb',
+    PouchDB.plugin(PouchDBFind);
+    this.database = new PouchDB('../schedule-logs');
+    this.database.createIndex({
+      index: {
+        fields: ['type', 'identity'],
+        name: 'logging',
+        ddoc: 'logging',
+        type: 'json',
+      },
+    }).then(response => {
+      console.log(response);
+      if (response.result === 'created') {
+        console.debug('index create success!');
+      }
     });
   }
 
@@ -65,8 +78,28 @@ export class StorageService {
   async logging(logs: LogParam) {
     return await this.database.post({
       type: logs.type,
-      raws: logs.raws,
-      createTime: logs.createTime,
+      identity: logs.identity,
+      output: logs.output,
+      create_time: logs.create_time,
+    });
+  }
+
+  /**
+   * Find Logs
+   * @param type
+   * @param identity
+   * @param limit
+   * @param skip
+   */
+  async find(type: string, identity: string, limit: number, skip: number) {
+    return await this.database.find({
+      selector: {
+        type,
+        identity,
+      },
+      limit,
+      skip,
+      use_index: 'logging',
     });
   }
 }

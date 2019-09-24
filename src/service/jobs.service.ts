@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
 import { execSync } from 'child_process';
-import { JobParam } from '../common/job-param';
+import { appendFileSync } from 'fs';
 import { Subject } from 'rxjs';
+import { JobParam } from '../common/job-param';
 import { RuntimeOption } from '../common/runtime-option';
 
 @Injectable()
@@ -50,7 +51,11 @@ export class JobsService {
           output: execSync(jobParam.bash).toString(),
         });
       } catch (e) {
-        console.log(e);
+        appendFileSync(
+          '../schedule-api/error.log',
+          '[' + jobParam.identity + ':' + new Date() + ']\n' + e.message,
+        );
+        this.stop(jobParam.identity);
       }
     }, null, jobParam.start, jobParam.zone);
     this.cronJobs.set(jobParam.identity, cronJob);
