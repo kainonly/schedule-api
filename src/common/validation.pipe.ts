@@ -1,5 +1,5 @@
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {

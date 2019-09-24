@@ -8,6 +8,5 @@ export class ConfigService {
 
   constructor() {
     this.schduleLogs = join(dirname(__dirname), env.SCHEDULE_LOGS);
-    console.log(this.schduleLogs);
   }
 }

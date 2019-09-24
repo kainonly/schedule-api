@@ -1,19 +1,24 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./cache",
+    "outDir": "./dist/",
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
   "exclude": [
     "node_modules",
-    "cache",
     "dist"
   ]
 }
