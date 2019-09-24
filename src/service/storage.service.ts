@@ -20,7 +20,6 @@ export class StorageService {
     try {
       return await this.database.get(key);
     } catch (e) {
-      console.log(e);
       if (e.message === 'missing') {
         return null;
       } else {
@@ -40,13 +39,16 @@ export class StorageService {
   async add(key: string, value: any) {
     try {
       const doc = await this.database.get(key);
-      return await this.database.put(Object.assign({
+      const data = Object.assign({
         _id: key,
         _rev: doc._rev,
-      }, value));
+      }, value);
+      return await this.database.put(data);
     } catch (e) {
       if (e.message === 'missing') {
-        return await this.database.post(value);
+        return await this.database.put(Object.assign({
+          _id: key,
+        }, value));
       } else {
         throw new BadRequestException({
           error: 1,
