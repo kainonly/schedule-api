@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { LogsParams } from '../common/logs-params';
 import * as PouchDB from 'pouchdb';
 
@@ -20,10 +20,14 @@ export class StorageService {
     try {
       return await this.database.get(key);
     } catch (e) {
+      console.log(e);
       if (e.message === 'missing') {
         return null;
       } else {
-        console.log(e);
+        throw new BadRequestException({
+          error: 1,
+          msg: e.message,
+        });
       }
     }
   }
@@ -44,7 +48,10 @@ export class StorageService {
       if (e.message === 'missing') {
         return await this.database.post(value);
       } else {
-        console.log(e);
+        throw new BadRequestException({
+          error: 1,
+          msg: e.message,
+        });
       }
     }
   }
@@ -54,14 +61,10 @@ export class StorageService {
    * @param logs
    */
   async logging(logs: LogsParams) {
-    try {
-      return await this.database.post({
-        type: logs.type,
-        raws: logs.raws,
-        createTime: logs.createTime,
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    return await this.database.post({
+      type: logs.type,
+      raws: logs.raws,
+      createTime: logs.createTime,
+    });
   }
 }
