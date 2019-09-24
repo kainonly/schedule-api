@@ -18,7 +18,6 @@ export class StorageService {
         type: 'json',
       },
     }).then(response => {
-      console.log(response);
       if (response.result === 'created') {
         console.debug('index create success!');
       }
