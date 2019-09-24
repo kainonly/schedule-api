@@ -12,8 +12,25 @@ export class AppController implements OnModuleInit {
   }
 
   onModuleInit(): any {
-    this.storageService.get('jobs').then(response => {
-      console.log(response);
+    this.jobsService.runtime.subscribe(data => {
+      console.log(data);
+      this.storageService.logging({
+        type: 'run',
+        raws: data,
+        status: true,
+        createTime: new Date(),
+      });
+    });
+    this.storageService.get('jobs').then((response: any) => {
+      if (response === null) {
+        return;
+      }
+      const { data } = response;
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          this.jobsService.put(data[key]);
+        }
+      }
     });
   }
 
