@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 
-export interface JobsParams {
+export interface JobParam {
   identity: string;
   time: string | Date | Moment;
   bash: string;

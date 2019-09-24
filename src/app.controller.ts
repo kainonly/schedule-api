@@ -12,7 +12,7 @@ export class AppController implements OnModuleInit {
   }
 
   onModuleInit(): any {
-    this.storageService.get('runtime').then(response => {
+    this.storageService.get('jobs').then(response => {
       console.log(response);
     });
   }
@@ -84,7 +84,7 @@ export class AppController implements OnModuleInit {
         status: result,
         createTime: new Date(),
       });
-      const runtime = await this.pauseRuntime();
+      const runtime = await this.temporaryJobs();
       return result && response.ok && runtime.ok ? {
         error: 0,
         msg: 'ok',
@@ -118,7 +118,7 @@ export class AppController implements OnModuleInit {
         status: result,
         createTime: new Date(),
       });
-      const runtime = await this.pauseRuntime();
+      const runtime = await this.temporaryJobs();
       return result && response.ok && runtime.ok ? {
         error: 0,
         msg: 'ok',
@@ -178,9 +178,9 @@ export class AppController implements OnModuleInit {
     }
   }
 
-  private async pauseRuntime() {
-    return await this.storageService.add('runtime', {
-      data: this.jobsService.getRunTime(),
+  private async temporaryJobs() {
+    return await this.storageService.add('jobs', {
+      data: this.jobsService.getJobs(),
     });
   }
 }

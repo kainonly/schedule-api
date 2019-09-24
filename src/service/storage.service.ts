@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { LogsParams } from '../common/logs-params';
+import { LogParam } from '../common/log-param';
 import * as PouchDB from 'pouchdb';
 
 @Injectable()
@@ -62,7 +62,7 @@ export class StorageService {
    * Logging Data
    * @param logs
    */
-  async logging(logs: LogsParams) {
+  async logging(logs: LogParam) {
     return await this.database.post({
       type: logs.type,
       raws: logs.raws,

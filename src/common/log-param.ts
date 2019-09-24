@@ -1,4 +1,4 @@
-export interface LogsParams {
+export interface LogParam {
   type: string;
   raws: any;
   status: boolean;
