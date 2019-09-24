@@ -1,4 +1,4 @@
-import { Body, Controller, OnModuleInit, Post, UsePipes } from '@nestjs/common';
+import { BadRequestException, Body, Controller, OnModuleInit, Post, UsePipes } from '@nestjs/common';
 import { ValidationPipe } from './common/validation.pipe';
 import { JobsService } from './service/jobs.service';
 import { StorageService } from './service/storage.service';
@@ -76,21 +76,29 @@ export class AppController implements OnModuleInit {
     },
   }))
   async put(@Body() body: any) {
-    const result = this.jobsService.put(body);
-    await this.storageService.logging({
-      type: 'put',
-      raws: body,
-      status: result,
-      createTime: new Date(),
-    });
-    await this.pauseRuntime();
-    return result ? {
-      error: 0,
-      msg: 'ok',
-    } : {
-      error: 1,
-      msg: 'failed',
-    };
+    try {
+      const result: boolean = this.jobsService.put(body);
+      const response = await this.storageService.logging({
+        type: 'put',
+        raws: body,
+        status: result,
+        createTime: new Date(),
+      });
+      const runtime = await this.pauseRuntime();
+      console.log(runtime);
+      return result && response.ok && runtime.ok ? {
+        error: 0,
+        msg: 'ok',
+      } : {
+        error: 1,
+        msg: 'failed',
+      };
+    } catch (e) {
+      throw new BadRequestException({
+        error: 1,
+        msg: e.message,
+      });
+    }
   }
 
   @Post('delete')
@@ -103,21 +111,28 @@ export class AppController implements OnModuleInit {
     },
   }))
   async delete(@Body() body: any) {
-    const result = this.jobsService.delete(body.identity);
-    await this.storageService.logging({
-      type: 'delete',
-      raws: body,
-      status: result,
-      createTime: new Date(),
-    });
-    await this.pauseRuntime();
-    return result ? {
-      error: 0,
-      msg: 'ok',
-    } : {
-      error: 1,
-      msg: 'failed',
-    };
+    try {
+      const result: boolean = this.jobsService.delete(body.identity);
+      const response = await this.storageService.logging({
+        type: 'delete',
+        raws: body,
+        status: result,
+        createTime: new Date(),
+      });
+      const runtime = await this.pauseRuntime();
+      return result && response.ok && runtime.ok ? {
+        error: 0,
+        msg: 'ok',
+      } : {
+        error: 1,
+        msg: 'failed',
+      };
+    } catch (e) {
+      throw new BadRequestException({
+        error: 1,
+        msg: e.message,
+      });
+    }
   }
 
   @Post('status')
@@ -133,29 +148,38 @@ export class AppController implements OnModuleInit {
     },
   }))
   async status(@Body() body: any) {
-    if (body.status) {
-      this.jobsService.start(body.identity);
-    } else {
-      this.jobsService.stop(body.identity);
+    try {
+      if (body.status) {
+        this.jobsService.start(body.identity);
+      } else {
+        this.jobsService.stop(body.identity);
+      }
+      const response = await this.storageService.logging({
+        type: 'status',
+        raws: body,
+        status: true,
+        createTime: new Date(),
+      });
+      if (response.ok) {
+        return {
+          error: 0,
+          msg: 'ok',
+        };
+      } else {
+        return {
+          error: 1,
+          msg: 'failed',
+        };
+      }
+    } catch (e) {
+      throw new BadRequestException({
+        error: 1,
+        msg: e.message,
+      });
     }
-    await this.storageService.logging({
-      type: 'status',
-      raws: body,
-      status: true,
-      createTime: new Date(),
-    });
-    return {
-      error: 0,
-      msg: 'ok',
-    };
   }
 
   private async pauseRuntime() {
-    try {
-      return await this.storageService.add('runtime', [...this.jobsService.getRunTime()]);
-    } catch (e) {
-      console.log(e);
-    }
+    return await this.storageService.add('runtime', this.jobsService.getRunTime().entries());
   }
-
 }
