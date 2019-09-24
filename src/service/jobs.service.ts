@@ -5,12 +5,18 @@ import { appendFileSync } from 'fs';
 import { Subject } from 'rxjs';
 import { JobParam } from '../common/job-param';
 import { RuntimeOption } from '../common/runtime-option';
+import { ConfigService } from './config.service';
 
 @Injectable()
 export class JobsService {
   runtime: Subject<RuntimeOption> = new Subject<RuntimeOption>();
   private jobs: { [key: string]: JobParam } = {};
   private cronJobs: Map<string, CronJob> = new Map<string, CronJob>();
+
+  constructor(
+    private readonly configService: ConfigService,
+  ) {
+  }
 
   /**
    * get jobs objects
@@ -52,7 +58,7 @@ export class JobsService {
         });
       } catch (e) {
         appendFileSync(
-          '../schedule-api/error.log',
+          this.configService.schduleLogs + '/error.log',
           '[' + jobParam.identity + ':' + new Date() + ']\n' + e.message,
         );
         this.stop(jobParam.identity);

@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from './config.service';
 import { LogParam } from '../common/log-param';
 import * as PouchDB from 'pouchdb';
 import * as PouchDBFind from 'pouchdb-find';
@@ -7,9 +8,11 @@ import * as PouchDBFind from 'pouchdb-find';
 export class StorageService {
   private database: PouchDB.Database;
 
-  constructor() {
+  constructor(
+    readonly configService: ConfigService,
+  ) {
     PouchDB.plugin(PouchDBFind);
-    this.database = new PouchDB('../schedule-logs');
+    this.database = new PouchDB(configService.schduleLogs);
     this.database.createIndex({
       index: {
         fields: ['type', 'identity'],
