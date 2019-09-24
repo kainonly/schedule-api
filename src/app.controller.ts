@@ -85,7 +85,6 @@ export class AppController implements OnModuleInit {
         createTime: new Date(),
       });
       const runtime = await this.pauseRuntime();
-      console.log(runtime);
       return result && response.ok && runtime.ok ? {
         error: 0,
         msg: 'ok',
@@ -180,6 +179,8 @@ export class AppController implements OnModuleInit {
   }
 
   private async pauseRuntime() {
-    return await this.storageService.add('runtime', this.jobsService.getRunTime().entries());
+    return await this.storageService.add('runtime', {
+      data: this.jobsService.getRunTime(),
+    });
   }
 }
