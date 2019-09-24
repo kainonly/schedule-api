@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
-    "build": "webpack",
+    "build": "webpack --config webpack.config.js",
     "prod": "node dist/server.js"
   },
   "dependencies": {

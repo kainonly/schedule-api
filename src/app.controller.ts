@@ -46,7 +46,7 @@ export class AppController implements OnModuleInit {
     },
   }))
   lists(@Body() body: any) {
-    const lists = body.identity.map(v => this.jobsService.get(v));
+    const lists = body.identity.map((v: any) => this.jobsService.get(v));
     return {
       error: 0,
       data: lists,

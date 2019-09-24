@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
 import { execSync } from 'child_process';
-import { appendFileSync } from 'fs';
 import { Subject } from 'rxjs';
 import { JobParam } from '../common/job-param';
 import { RuntimeOption } from '../common/runtime-option';
