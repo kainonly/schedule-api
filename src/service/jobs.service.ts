@@ -1,18 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
 import { execSync } from 'child_process';
-import { JobsParams } from '../common/jobs-params';
+import { JobParam } from '../common/job-param';
+import { Subject } from 'rxjs';
+import { RuntimeOption } from '../common/runtime-option';
 
 @Injectable()
 export class JobsService {
-  private runtime: { [key: string]: JobsParams } = {};
-  private jobs: Map<string, CronJob> = new Map<string, CronJob>();
+  private jobs: { [key: string]: JobParam } = {};
+  private cronJobs: Map<string, CronJob> = new Map<string, CronJob>();
+  runtime: Subject<RuntimeOption> = new Subject<RuntimeOption>();
 
   /**
-   * get runtime map
+   * get jobs objects
    */
-  getRunTime() {
-    return this.runtime;
+  getJobs() {
+    return this.jobs;
   }
 
   /**
@@ -20,11 +23,11 @@ export class JobsService {
    * @param identity
    */
   get(identity: string): any {
-    if (!this.jobs.has(identity)) {
+    if (!this.cronJobs.has(identity)) {
       return false;
     }
-    const job = this.jobs.get(identity);
-    return Object.assign(this.runtime.hasOwnProperty(identity), {
+    const job = this.cronJobs.get(identity);
+    return Object.assign(this.jobs.hasOwnProperty(identity), {
       running: job.running,
       nextDate: job.nextDate(),
       lastDate: job.lastDate(),
@@ -33,22 +36,28 @@ export class JobsService {
 
   /**
    * add or update job
-   * @param jobsParams
+   * @param jobParam
    */
-  put(jobsParams: JobsParams) {
-    if (this.runtime.hasOwnProperty(jobsParams.identity)) {
-      this.delete(jobsParams.identity);
+  put(jobParam: JobParam) {
+    if (this.jobs.hasOwnProperty(jobParam.identity)) {
+      this.delete(jobParam.identity);
     }
-    this.runtime[jobsParams.identity] = jobsParams;
-    const cronJob = new CronJob(jobsParams.time, () => {
+    this.jobs[jobParam.identity] = jobParam;
+    const cronJob = new CronJob(jobParam.time, () => {
       try {
-        const output = execSync(jobsParams.bash);
+        this.runtime.next({
+          identity: jobParam.identity,
+          output: execSync(jobParam.bash).toString(),
+        });
       } catch (e) {
         console.log(e);
       }
-    }, null, jobsParams.start, jobsParams.zone);
-    this.jobs.set(jobsParams.identity, cronJob);
-    return this.runtime.hasOwnProperty(jobsParams.identity) && this.jobs.has(jobsParams.identity);
+    }, null, jobParam.start, jobParam.zone);
+    this.cronJobs.set(jobParam.identity, cronJob);
+    return (
+      this.jobs.hasOwnProperty(jobParam.identity)
+      && this.cronJobs.has(jobParam.identity)
+    );
   }
 
   /**
@@ -56,13 +65,13 @@ export class JobsService {
    * @param identity
    */
   delete(identity: string): boolean {
-    if (!this.jobs.has(identity)) {
+    if (!this.cronJobs.has(identity)) {
       return true;
     }
-    this.jobs.get(identity).stop();
+    this.cronJobs.get(identity).stop();
     return (
-      this.jobs.delete(identity) &&
-      Reflect.deleteProperty(this.runtime, identity)
+      this.cronJobs.delete(identity) &&
+      Reflect.deleteProperty(this.jobs, identity)
     );
   }
 
@@ -71,10 +80,10 @@ export class JobsService {
    * @param identity
    */
   start(identity: string): boolean {
-    if (!this.jobs.has(identity)) {
+    if (!this.cronJobs.has(identity)) {
       return false;
     }
-    const job = this.jobs.get(identity);
+    const job = this.cronJobs.get(identity);
     job.start();
     return job.running;
   }
@@ -84,10 +93,10 @@ export class JobsService {
    * @param identity
    */
   stop(identity: string): boolean {
-    if (!this.jobs.has(identity)) {
+    if (!this.cronJobs.has(identity)) {
       return false;
     }
-    const job = this.jobs.get(identity);
+    const job = this.cronJobs.get(identity);
     job.stop();
     return job.running;
   }
