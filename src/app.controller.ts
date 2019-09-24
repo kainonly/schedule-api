@@ -13,12 +13,12 @@ export class AppController implements OnModuleInit {
 
   onModuleInit(): any {
     this.jobsService.runtime.subscribe(data => {
-      console.log(data);
       this.storageService.logging({
         type: 'run',
-        raws: data,
+        identity: data.identity,
+        output: data.output,
         status: true,
-        createTime: new Date(),
+        create_time: (new Date()).getTime(),
       });
     });
     this.storageService.get('jobs').then((response: any) => {
@@ -97,9 +97,10 @@ export class AppController implements OnModuleInit {
       const result: boolean = this.jobsService.put(body);
       const response = await this.storageService.logging({
         type: 'put',
-        raws: body,
+        identity: body.identity,
+        response: body,
         status: result,
-        createTime: new Date(),
+        create_time: (new Date()).getTime(),
       });
       const runtime = await this.temporaryJobs();
       return result && response.ok && runtime.ok ? {
@@ -131,9 +132,10 @@ export class AppController implements OnModuleInit {
       const result: boolean = this.jobsService.delete(body.identity);
       const response = await this.storageService.logging({
         type: 'delete',
-        raws: body,
+        identity: body.identity,
+        response: body,
         status: result,
-        createTime: new Date(),
+        create_time: (new Date()).getTime(),
       });
       const runtime = await this.temporaryJobs();
       return result && response.ok && runtime.ok ? {
@@ -172,9 +174,10 @@ export class AppController implements OnModuleInit {
       }
       const response = await this.storageService.logging({
         type: 'status',
-        raws: body,
+        identity: body.identity,
+        response: body,
         status: true,
-        createTime: new Date(),
+        create_time: (new Date()).getTime(),
       });
       if (response.ok) {
         return {
@@ -195,6 +198,47 @@ export class AppController implements OnModuleInit {
     }
   }
 
+  @UsePipes(new ValidationPipe({
+    required: ['type', 'identity', 'limit', 'skip'],
+    properties: {
+      type: {
+        type: 'string',
+        enum: ['put', 'delete', 'status', 'run'],
+      },
+      identity: {
+        type: 'string',
+      },
+      limit: {
+        type: 'number',
+        minimum: 1,
+        maximum: 50,
+      },
+      skip: {
+        type: 'number',
+        minimum: 1,
+      },
+    },
+  }))
+  @Post('logging')
+  async logging(@Body() body: any) {
+    try {
+      return await this.storageService.find(
+        body.type,
+        body.identity,
+        body.limit,
+        body.skip,
+      );
+    } catch (e) {
+      throw new BadRequestException({
+        error: 1,
+        msg: e.message,
+      });
+    }
+  }
+
+  /**
+   * Temporary Jobs
+   */
   private async temporaryJobs() {
     return await this.storageService.add('jobs', {
       data: this.jobsService.getJobs(),
