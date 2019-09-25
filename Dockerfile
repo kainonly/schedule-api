@@ -1,12 +1,14 @@
 FROM node:alpine
 
-ENV SCHEDULE_LOGS=/home/node/logs
-VOLUME [ "/home/node/logs" ]
-WORKDIR /home/node
+ENV SCHEDULE_LOGS=logs
 
-COPY dist /home/node/app
-COPY package.json /home/node/package.json
+COPY dist /app
+COPY package.json /app/package.json
 
-RUN npm install
+RUN cd /app \
+    && npm install --production
+
+VOLUME ["/app"]
+WORKDIR /app
 
 CMD [ "sh" ]

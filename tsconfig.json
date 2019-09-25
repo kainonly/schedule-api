@@ -1,21 +1,14 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
     "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2017",
-    "outDir": "./dist/",
-    "baseUrl": "./",
-    "incremental": true,
-    "noImplicitAny": true,
+    "target": "es2019",
     "sourceMap": false,
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "outDir": "./dist",
+    "incremental": true
   },
   "exclude": [
     "node_modules",
