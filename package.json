@@ -5,9 +5,9 @@
   "author": "kain",
   "license": "MIT",
   "scripts": {
-    "start": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main.js\"",
-    "build": "webpack --config webpack.config.js",
-    "prod": "node dist/server.js"
+    "start": "tsc-watch -p src/tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "build": "rimraf dist && webpack",
+    "prod": "node dist/schedule-api.js"
   },
   "dependencies": {
     "@nestjs/common": "^6.0.0",
@@ -19,11 +19,9 @@
     "pouchdb": "^7.1.1",
     "pouchdb-find": "^7.1.1",
     "reflect-metadata": "^0.1.12",
-    "rimraf": "^2.6.2",
     "rxjs": "^6.3.3"
   },
   "devDependencies": {
-    "@types/ajv": "^1.0.0",
     "@types/cron": "^1.7.1",
     "@types/node": "11.13.4",
     "@types/pouchdb": "^6.4.0",
@@ -34,8 +32,9 @@
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
     "typescript": "3.4.3",
-    "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
     "webpack-node-externals": "^1.7.2"
   }
 }

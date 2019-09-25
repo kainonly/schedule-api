@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from './config.service';
 import { LogParam } from '../common/log-param';
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+import * as PouchDB from 'pouchdb';
+import * as PouchDBFind from 'pouchdb-find';
 
 @Injectable()
 export class StorageService {
