@@ -1,15 +1,15 @@
 import * as fastify from 'fastify';
+import * as fastifyCompress from 'fastify-compress';
 import { Server, IncomingMessage, ServerResponse } from 'http';
+import { route } from './route';
 
 const server: fastify.FastifyInstance<Server,
   IncomingMessage,
   ServerResponse> = fastify({
   logger: true,
 });
-
-server.get('/', (request, reply) => {
-  reply.send({ hello: 'world' });
-});
+server.register(fastifyCompress);
+server.register(route);
 
 server.listen(3000, (err, address) => {
   if (err) {
