@@ -1,6 +1,6 @@
-import { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import { FastifyInstance } from 'fastify';
 
-const route = (fastify: FastifyInstance, opts: RouteShorthandOptions, done: any): void => {
+const route = (fastify: FastifyInstance, options: any, done: any): void => {
   /**
    * Get Jobs Lists
    */
