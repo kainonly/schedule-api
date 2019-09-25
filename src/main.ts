@@ -1,22 +1,17 @@
 import * as fastify from 'fastify';
 import * as fastifyCompress from 'fastify-compress';
 import fastifyPouchDB from 'fastify-pouchdb';
+import { env } from 'process';
 
 import { Server, IncomingMessage, ServerResponse } from 'http';
-import { route } from './api/route';
-
-declare module 'fastify' {
-  interface FastifyReply<HttpResponse> {
-    utility(): any;
-  }
-}
+import { route } from './route';
 
 const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({
   logger: true,
 });
 server.register(fastifyCompress);
 server.register(fastifyPouchDB, {
-  name: 'logs',
+  name: env.STORAGE,
 });
 server.register(route);
 
