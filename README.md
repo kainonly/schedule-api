@@ -2,6 +2,12 @@
 
 schedule manager api
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/kainonly/schedule-api.svg?style=flat-square)](https://hub.docker.com/r/kainonly/schedule-api)
+[![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/kainonly/schedule-api.svg?style=flat-square)](https://hub.docker.com/r/kainonly/schedule-api)
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/kainonly/schedule-api.svg?style=flat-square)](https://hub.docker.com/r/kainonly/schedule-api)
+[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-blue.svg?style=flat-square)](https://github.com/kainonly/schedule-api)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/kainonly/schedule-api/master/LICENSE)
+
 ```shell
 docker pull kainonly/schedule-api:1.0.0
 ```
