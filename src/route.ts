@@ -3,12 +3,20 @@ import { StorageService } from './common/storage.service';
 import { JobsService } from './common/jobs.service';
 
 const route = (fastify: FastifyInstance, options: any, done: any): void => {
-  const storageService = new StorageService(fastify);
-  const jobsService = new JobsService();
+  const storage = new StorageService(fastify);
+  const jobs = new JobsService();
+
+  jobs.runtime.on('default', (data) => {
+    console.log(data);
+  });
+
+  jobs.runtime.on('errors', (data) => {
+    console.log(data);
+  });
 
   async function temporaryJobs() {
-    return await storageService.add('jobs', {
-      data: jobsService.getJobs(),
+    return await storage.add('jobs', {
+      data: jobs.getJobs(),
     });
   }
 
@@ -30,7 +38,7 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
     const body = request.body;
     reply.send({
       error: 0,
-      data: body.identity.map((v: any) => jobsService.get(v)),
+      data: body.identity.map((v: any) => jobs.get(v)),
     });
   });
   /**
@@ -49,7 +57,7 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
     },
   }, async (request, reply) => {
     const body = request.body;
-    const result = jobsService.get(body.identity);
+    const result = jobs.get(body.identity);
     if (result) {
       reply.send({
         error: 0,
@@ -90,8 +98,8 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
     },
   }, async (request, reply) => {
     const body = request.body;
-    const result: boolean = jobsService.put(body);
-    const response = await storageService.logging({
+    const result: boolean = jobs.put(body);
+    const response = await storage.logging({
       type: 'put',
       identity: body.identity,
       response: body,
@@ -127,8 +135,8 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
     },
   }, async (request, reply) => {
     const body = request.body;
-    const result: boolean = jobsService.delete(body.identity);
-    const response = await storageService.logging({
+    const result: boolean = jobs.delete(body.identity);
+    const response = await storage.logging({
       type: 'delete',
       identity: body.identity,
       response: body,
@@ -168,11 +176,11 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
   }, async (request, reply) => {
     const body = request.body;
     if (body.status) {
-      jobsService.start(body.identity);
+      jobs.start(body.identity);
     } else {
-      jobsService.stop(body.identity);
+      jobs.stop(body.identity);
     }
-    const response = await storageService.logging({
+    const response = await storage.logging({
       type: 'status',
       identity: body.identity,
       response: body,
@@ -233,7 +241,6 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
       },
     });
   });
-
   done();
 };
 

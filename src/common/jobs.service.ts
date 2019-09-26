@@ -1,7 +1,7 @@
 import { JobParam } from '../types/job-param';
 import { CronJob } from 'cron';
 import { execSync } from 'child_process';
-import EventEmitter = NodeJS.EventEmitter;
+import * as EventEmitter from 'events';
 
 export class JobsService {
   runtime: EventEmitter = new EventEmitter();
