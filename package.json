@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Schedule Manager Api",
   "scripts": {
-    "start": "tsc-watch -p src/tsconfig.build.json --onSuccess \"node dist/main.js\"",
+    "start": "tsc-watch -p src/tsconfig.build.json --onSuccess \"node cache/main.js\"",
     "build": "rimraf dist && webpack && cpy package.json dist",
     "prod": "node dist/schedule-api.js"
   },

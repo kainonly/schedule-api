@@ -13,7 +13,7 @@ server.register(fastifyPouchDB, {
   name: env.STORAGE,
 });
 server.register(AppModule.footRoot);
-server.listen(3000, (err, address) => {
+server.listen(3000, '0.0.0.0', (err, address) => {
   if (err) {
     server.log.error(err);
     process.exit(1);

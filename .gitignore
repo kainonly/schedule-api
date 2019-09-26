@@ -1,5 +1,4 @@
 # compiled output
-/dist
 /node_modules
 
 # Logs
@@ -34,4 +33,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 package-lock.json
-storage
+/storage
+/cache
