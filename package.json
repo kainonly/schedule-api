@@ -4,7 +4,7 @@
   "description": "Schedule Manager Api",
   "scripts": {
     "start": "tsc-watch -p src/tsconfig.build.json --onSuccess \"node dist/main.js\"",
-    "build": "webpack",
+    "build": "rimraf dist && webpack && cpy package.json dist",
     "prod": "node dist/schedule-api.js"
   },
   "dependencies": {
@@ -16,14 +16,16 @@
   "devDependencies": {
     "@types/cron": "^1.7.1",
     "@types/node": "^12.7.7",
-    "@types/webpack": "^4.4.32",
     "@types/pouchdb": "^6.4.0",
+    "@types/webpack": "^4.4.32",
+    "cpy-cli": "^2.0.0",
     "prettier": "1.17.0",
+    "rimraf": "^3.0.0",
     "ts-loader": "^6.0.1",
     "ts-node": "^8.2.0",
     "tsc-watch": "^4.0.0",
-    "tslint": "5.16.0",
     "tsconfig-paths": "3.8.0",
+    "tslint": "5.16.0",
     "typescript": "3.4.3",
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
