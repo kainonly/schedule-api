@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./cache",
     "module": "commonjs",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -12,6 +12,7 @@
   },
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "cache"
   ]
 }
