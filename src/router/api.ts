@@ -1,19 +1,11 @@
 import { FastifyInstance } from 'fastify';
-import { StorageService } from './common/storage.service';
-import { JobsService } from './common/jobs.service';
+import { JobsService } from '../common/jobs.service';
+import { StorageService } from '../common/storage.service';
 
-const route = (fastify: FastifyInstance, options: any, done: any): void => {
-  const storage = new StorageService(fastify);
-  const jobs = new JobsService();
-
-  jobs.runtime.on('default', (data) => {
-    console.log(data);
-  });
-
-  jobs.runtime.on('errors', (data) => {
-    console.log(data);
-  });
-
+const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageService) => {
+  /**
+   * Temporary Jobs Storage
+   */
   async function temporaryJobs() {
     return await storage.add('jobs', {
       data: jobs.getJobs(),
@@ -21,7 +13,7 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
   }
 
   /**
-   * Get Jobs Lists
+   * Lists Jobs
    */
   fastify.post('/lists', {
     schema: {
@@ -200,7 +192,7 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
     }
   });
   /**
-   * Get Logging Data
+   * Get Logging
    */
   fastify.post('/logging', {
     schema: {
@@ -209,7 +201,7 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
         properties: {
           type: {
             type: 'string',
-            enum: ['put', 'delete', 'status', 'run'],
+            enum: ['put', 'delete', 'status', 'run', 'error'],
           },
           identity: {
             type: 'string',
@@ -228,7 +220,7 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
     },
   }, async (request, reply) => {
     const body = request.body;
-    const lists = await this.storageService.find(
+    const lists = await storage.find(
       body.type,
       body.identity,
       body.limit,
@@ -241,7 +233,6 @@ const route = (fastify: FastifyInstance, options: any, done: any): void => {
       },
     });
   });
-  done();
 };
 
-export { route };
+export { api };

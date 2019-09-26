@@ -3,16 +3,16 @@ import * as fastifyCompress from 'fastify-compress';
 import fastifyPouchDB from 'fastify-pouchdb';
 import { env } from 'process';
 
-import { route } from './route';
+import { AppModule } from './app.module';
 
 const server: fastify.FastifyInstance = fastify({
-  logger: true,
+  logger: env.LOGGER ? env.LOGGER : false,
 });
 server.register(fastifyCompress);
 server.register(fastifyPouchDB, {
   name: env.STORAGE,
 });
-server.register(route);
+server.register(AppModule.footRoot);
 server.listen(3000, (err, address) => {
   if (err) {
     server.log.error(err);
