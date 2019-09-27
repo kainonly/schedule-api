@@ -86,7 +86,7 @@ export class StorageService {
    * @param skip
    */
   async find(type: string, identity: string, limit: number, skip: number) {
-    return await this.database.find({
+    const doc = await this.database.find({
       selector: {
         type,
         identity,
@@ -95,5 +95,8 @@ export class StorageService {
       skip,
       use_index: 'logging',
     });
+    return {
+      lists: doc.docs,
+    };
   }
 }
