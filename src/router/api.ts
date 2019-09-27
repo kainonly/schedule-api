@@ -220,7 +220,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
     },
   }, async (request, reply) => {
     const body = request.body;
-    const lists = await storage.find(
+    const data = await storage.find(
       body.type,
       body.identity,
       body.limit,
@@ -228,9 +228,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
     );
     reply.send({
       error: 0,
-      data: {
-        lists,
-      },
+      data,
     });
   });
 };
