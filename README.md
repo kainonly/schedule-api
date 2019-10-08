@@ -9,12 +9,8 @@ schedule manager api
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/kainonly/schedule-api/master/LICENSE)
 
 ```shell
-docker pull kainonly/schedule-api:1.0.0
+docker pull kainonly/schedule-api
 ```
-
-## Version
-
-- `1.0.0` stable
 
 ## Docker Compose
 
@@ -24,7 +20,7 @@ example
 version: '3.7'
 services:
   schedule:
-    image: kainonly/schedule-api:1.0.0
+    image: kainonly/schedule-api
     restart: always
     volumes: 
       - ./schedule:/app/storage
