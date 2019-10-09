@@ -110,6 +110,12 @@ Assume that the underlying request path is `http://localhost:3000`
 }
 ```
 
+#### Get All Identity
+
+- url `/all`
+- method `POST`
+
+
 #### Lists Job
 
 - url `/lists`
