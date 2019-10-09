@@ -115,7 +115,6 @@ Assume that the underlying request path is `http://localhost:3000`
 - url `/all`
 - method `POST`
 
-
 #### Lists Job
 
 - url `/lists`
