@@ -13,6 +13,21 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
   }
 
   /**
+   * Get All Identity
+   */
+  fastify.post('/all', async (request, reply) => {
+    const identity = [];
+    for (const key in jobs.getJobs()) {
+      if (jobs.getJobs().hasOwnProperty(key)) {
+        identity.push(key);
+      }
+    }
+    reply.send({
+      error: 0,
+      data: identity,
+    });
+  });
+  /**
    * Lists Jobs
    */
   fastify.post('/lists', {
