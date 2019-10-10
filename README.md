@@ -30,7 +30,6 @@ services:
 
 ## Environment
 
-- **LOGGER** `boolean` service logger, default `false`
 - **STORAGE** `string` leveldb storage path, default `/app/storage/logs`
 
 ## Api docs
@@ -212,17 +211,27 @@ Assume that the underlying request path is `http://localhost:3000`
 - url `/logging`
 - method `POST`
 - body
-  - **type** `string` Logging Type
+  - **type** `string` Logging Type, All if not present
     - 'put', 'delete', 'status', 'run', 'error'
   - **identity** `string` Job identity
+  - **create_time** `object`
+    - **$lt** `number` Match fields "less than" this one.
+    - **$gt** `number` Match fields "greater than" this one.
+    - **$lte** `number` Match fields "less than or equal to" this one.
+    - **$gte** `number` Match fields "greater than or equal to" this one.
+    - **$eq** `number` Match fields equal to this one.
+    - **$ne** `number` Match fields not equal to this one.
   - **limit** `number` Page limit
   - **skip** `number` Page Number
 
 ```json
 {
-	"type":"run",
 	"identity":"test",
+	"create_time":{
+            "$lt":1570701566010,
+            "$gt":1570701564010
+	},
 	"limit":20,
-	"skip":1
+	"skip":0
 }
 ```
