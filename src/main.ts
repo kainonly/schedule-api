@@ -6,7 +6,7 @@ import { env } from 'process';
 import { AppModule } from './app.module';
 
 const server: fastify.FastifyInstance = fastify({
-  logger: env.LOGGER ? env.LOGGER : false,
+  logger: true,
 });
 server.register(fastifyCompress);
 server.register(fastifyPouchDB, {

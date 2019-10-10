@@ -11,10 +11,18 @@ export class StorageService {
     this.database = fastify.pouchdb;
     this.database.createIndex({
       index: {
-        fields: ['type', 'identity'],
-        name: 'logging',
-        ddoc: 'logging',
-        type: 'json',
+        fields: ['type', 'identity', 'create_time'],
+      },
+    }).then(response => {
+      if (response.result === 'created') {
+        console.debug('index create success!');
+      }
+    }).catch(error => {
+      console.log(error);
+    });
+    this.database.createIndex({
+      index: {
+        fields: ['create_time'],
       },
     }).then(response => {
       if (response.result === 'created') {
@@ -82,18 +90,22 @@ export class StorageService {
    * Find Logs
    * @param type
    * @param identity
+   * @param create_time
    * @param limit
    * @param skip
    */
-  async find(type: string, identity: string, limit: number, skip: number) {
+  async find(type: string, identity: string, create_time: any, limit: number, skip: number) {
     const doc = await this.database.find({
       selector: {
         type,
         identity,
+        create_time,
       },
+      sort: [{
+        create_time: 'desc',
+      }],
       limit,
       skip,
-      use_index: 'logging',
     });
     return {
       lists: doc.docs,

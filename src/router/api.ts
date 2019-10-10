@@ -212,7 +212,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
   fastify.post('/logging', {
     schema: {
       body: {
-        required: ['type', 'identity', 'limit', 'skip'],
+        required: ['identity', 'create_time', 'limit', 'skip'],
         properties: {
           type: {
             type: 'string',
@@ -221,6 +221,9 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
           identity: {
             type: 'string',
           },
+          create_time: {
+            type: 'object',
+          },
           limit: {
             type: 'number',
             minimum: 1,
@@ -228,7 +231,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
           },
           skip: {
             type: 'number',
-            minimum: 1,
+            minimum: 0,
           },
         },
       },
@@ -238,6 +241,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
     const data = await storage.find(
       body.type,
       body.identity,
+      body.create_time,
       body.limit,
       body.skip,
     );
