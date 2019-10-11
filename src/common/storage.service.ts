@@ -1,36 +1,14 @@
 import { FastifyInstance } from 'fastify';
-import * as PouchDB from 'pouchdb';
 import { LogParam } from '../types/log-param';
+import { Client } from '@elastic/elasticsearch';
 
 export class StorageService {
-  private database: PouchDB.Database;
+  private client: Client;
 
   constructor(
     private readonly fastify: FastifyInstance,
   ) {
-    this.database = fastify.pouchdb;
-    this.database.createIndex({
-      index: {
-        fields: ['type', 'identity', 'create_time'],
-      },
-    }).then(response => {
-      if (response.result === 'created') {
-        console.debug('index create success!');
-      }
-    }).catch(error => {
-      console.log(error);
-    });
-    this.database.createIndex({
-      index: {
-        fields: ['create_time'],
-      },
-    }).then(response => {
-      if (response.result === 'created') {
-        console.debug('index create success!');
-      }
-    }).catch(error => {
-      console.log(error);
-    });
+    this.client = fastify.elastic;
   }
 
   /**
@@ -39,7 +17,7 @@ export class StorageService {
    */
   async get(key: string) {
     try {
-      return await this.database.get(key);
+      return await this.client.get(key);
     } catch (e) {
       if (e.message === 'missing') {
         return null;

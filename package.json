@@ -8,9 +8,11 @@
     "prod": "node dist/schedule-api.js"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.4.0",
     "cron": "^1.7.2",
     "fastify": "^2.8.0",
-    "fastify-compress": "^0.11.0"
+    "fastify-compress": "^0.11.0",
+    "fastify-elasticsearch": "^1.0.0"
   },
   "devDependencies": {
     "@types/cron": "^1.7.1",
