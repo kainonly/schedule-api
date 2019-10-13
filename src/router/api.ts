@@ -1,15 +1,14 @@
 import { FastifyInstance } from 'fastify';
 import { JobsService } from '../common/jobs.service';
 import { StorageService } from '../common/storage.service';
+import { ConfigService } from '../common/config.service';
 
-const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageService) => {
+const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService, storage: StorageService) => {
   /**
    * Temporary Jobs Storage
    */
-  async function temporaryJobs() {
-    return await storage.add('jobs', {
-      data: jobs.getJobs(),
-    });
+  function temporaryJobs() {
+    config.set(jobs.getJobs());
   }
 
   /**
@@ -106,15 +105,15 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
   }, async (request, reply) => {
     const body = request.body;
     const result: boolean = jobs.put(body);
-    const response = await storage.logging({
+    const response = await storage.add({
       type: 'put',
       identity: body.identity,
       response: body,
       status: result,
       create_time: (new Date()).getTime(),
     });
-    const runtime: any = await temporaryJobs();
-    if (result && response.ok && runtime.ok) {
+    temporaryJobs();
+    if (result && response.statusCode === 201) {
       reply.send({
         error: 0,
         msg: 'ok',
@@ -143,15 +142,14 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
   }, async (request, reply) => {
     const body = request.body;
     const result: boolean = jobs.delete(body.identity);
-    const response = await storage.logging({
+    const response = await storage.add({
       type: 'delete',
       identity: body.identity,
       response: body,
       status: result,
       create_time: (new Date()).getTime(),
     });
-    const runtime: any = await temporaryJobs();
-    if (result && response.ok && runtime.ok) {
+    if (result && response.statusCode === 201) {
       reply.send({
         error: 0,
         msg: 'ok',
@@ -187,14 +185,14 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
     } else {
       jobs.stop(body.identity);
     }
-    const response = await storage.logging({
+    const response = await storage.add({
       type: 'status',
       identity: body.identity,
       response: body,
       status: true,
       create_time: (new Date()).getTime(),
     });
-    if (response.ok) {
+    if (response.statusCode === 201) {
       reply.send({
         error: 0,
         msg: 'ok',
@@ -238,16 +236,17 @@ const api = (fastify: FastifyInstance, jobs: JobsService, storage: StorageServic
     },
   }, async (request, reply) => {
     const body = request.body;
-    const data = await storage.find(
+    const response = await storage.search(
       body.type,
       body.identity,
       body.create_time,
       body.limit,
       body.skip,
     );
+    console.log(response.body);
     reply.send({
       error: 0,
-      data,
+      data: response.body,
     });
   });
 };

@@ -1,6 +1,6 @@
 # Schedule api
 
-schedule manager api
+a scheduled dispatch management service, `1.x` branch uses leveldb as a bottleneck in log storage performance
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/kainonly/schedule-api.svg?style=flat-square)](https://hub.docker.com/r/kainonly/schedule-api)
 [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/kainonly/schedule-api.svg?style=flat-square)](https://hub.docker.com/r/kainonly/schedule-api)
@@ -14,7 +14,7 @@ docker pull kainonly/schedule-api
 
 ## Docker Compose
 
-example
+`1.x` branch example
 
 ```yml
 version: '3.7'
@@ -28,9 +28,24 @@ services:
       - 3000:3000
 ```
 
+now
+
+```yml
+version: '3.7'
+services:
+  schedule:
+    image: kainonly/schedule-api
+    restart: always
+    volumes: 
+      - ./schedule/config.json:/app/config.json
+    ports:
+      - 3000:3000
+```
+
 ## Environment
 
-- **STORAGE** `string` leveldb storage path, default `/app/storage/logs`
+- **ELASTIC** `string` elasticsearch url
+- **STORAGE** `string` leveldb storage path, default `/app/storage/logs` (`1.x` branch)
 
 ## Api docs
 
@@ -215,12 +230,12 @@ Assume that the underlying request path is `http://localhost:3000`
     - 'put', 'delete', 'status', 'run', 'error'
   - **identity** `string` Job identity
   - **create_time** `object`
-    - **$lt** `number` Match fields "less than" this one.
-    - **$gt** `number` Match fields "greater than" this one.
-    - **$lte** `number` Match fields "less than or equal to" this one.
-    - **$gte** `number` Match fields "greater than or equal to" this one.
-    - **$eq** `number` Match fields equal to this one.
-    - **$ne** `number` Match fields not equal to this one.
+    - **lt** `number` Match fields "less than" this one.
+    - **gt** `number` Match fields "greater than" this one.
+    - **lte** `number` Match fields "less than or equal to" this one.
+    - **gte** `number` Match fields "greater than or equal to" this one.
+    - **eq** `number` Match fields equal to this one.
+    - **ne** `number` Match fields not equal to this one.
   - **limit** `number` Page limit
   - **skip** `number` Page Number
 
@@ -228,10 +243,20 @@ Assume that the underlying request path is `http://localhost:3000`
 {
 	"identity":"test",
 	"create_time":{
-            "$lt":1570701566010,
-            "$gt":1570701564010
+        "lt":1570701566010,
+        "gt":1570701564010
 	},
 	"limit":20,
 	"skip":0
 }
 ```
+
+`1.x` branch **create_time** diff
+
+- **create_time** `object`
+  - **$lt** `number` Match fields "less than" this one.
+  - **$gt** `number` Match fields "greater than" this one.
+  - **$lte** `number` Match fields "less than or equal to" this one.
+  - **$gte** `number` Match fields "greater than or equal to" this one.
+  - **$eq** `number` Match fields equal to this one.
+  - **$ne** `number` Match fields not equal to this one.

@@ -1,9 +1,13 @@
 import { FastifyInstance } from 'fastify';
+import { join } from 'path';
 import { StorageService } from './common/storage.service';
 import { JobsService } from './common/jobs.service';
 import { api } from './router/api';
 
+import { ConfigService } from './common/config.service';
+
 export class AppModule {
+  private config: ConfigService;
   private jobs: JobsService;
   private storage: StorageService;
 
@@ -25,34 +29,28 @@ export class AppModule {
    * Set Providers
    */
   setProviders() {
+    this.config = new ConfigService(join(__dirname, 'config.json'));
     this.jobs = new JobsService();
-    this.storage = new StorageService(this.fastify);
+    this.storage = new StorageService(this.fastify, 'schedule-service');
   }
 
   /**
    * Init
    */
   onInit() {
-    this.storage.get('jobs').then((response: any) => {
-      if (response === null) {
-        return;
+    const configs = this.config.get();
+    for (const key in configs) {
+      if (configs.hasOwnProperty(key)) {
+        this.jobs.put(configs[key]);
       }
-      const { data } = response;
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          this.jobs.put(data[key]);
-        }
-      }
-    }).catch(error => {
-      console.log(error);
-    });
+    }
   }
 
   /**
    * Set Route
    */
   setRoute() {
-    api(this.fastify, this.jobs, this.storage);
+    api(this.fastify, this.jobs, this.config, this.storage);
   }
 
   /**
@@ -60,7 +58,7 @@ export class AppModule {
    */
   onChange() {
     this.jobs.runtime.on('default', (data) => {
-      this.storage.logging({
+      this.storage.add({
         type: 'run',
         identity: data.identity,
         output: data.output,
@@ -69,7 +67,7 @@ export class AppModule {
       });
     });
     this.jobs.runtime.on('errors', (data) => {
-      this.storage.logging({
+      this.storage.add({
         type: 'error',
         identity: data.identity,
         output: data.output,

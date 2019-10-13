@@ -18,7 +18,7 @@ const server: fastify.FastifyInstance = fastify({
 server.register(fastifyCompress);
 server.register(fastifyElasticsearch, {
   client: new Client({
-    node: env.node,
+    node: env.ELASTIC,
   }),
 });
 server.register(AppModule.footRoot);

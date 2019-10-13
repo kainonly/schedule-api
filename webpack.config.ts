@@ -5,6 +5,10 @@ import * as nodeExternals from 'webpack-node-externals';
 const config: webpack.Configuration = {
   entry: './src/main.ts',
   target: 'node',
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
   mode: 'production',
   module: {
     rules: [
@@ -22,7 +26,7 @@ const config: webpack.Configuration = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'schedule-api.js',
+    filename: 'app.js',
     path: path.resolve(__dirname, 'dist'),
   },
 };
