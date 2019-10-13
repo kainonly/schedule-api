@@ -1,10 +1,10 @@
 {
   "name": "schedule-api",
-  "description": "Schedule Manager Api",
+  "description": "a scheduled dispatch management service",
   "scripts": {
     "start": "tsc-watch -p src/tsconfig.build.json --onSuccess \"node cache/main.js\"",
     "build": "rimraf dist && webpack && cpy package.json dist",
-    "prod": "node dist/schedule-api.js"
+    "prod": "node dist/app.js"
   },
   "dependencies": {
     "cron": "^1.7.2",
