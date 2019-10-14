@@ -49,11 +49,11 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-	"identity":"test",
-	"time":"* * * * * *",
-	"bash":"echo 1",
-	"start":true,
-	"zone":"Asia/Shanghai"
+  "identity":"test",
+  "time":"* * * * * *",
+  "bash":"echo 1",
+  "start":true,
+  "zone":"Asia/Shanghai"
 }
 ```
 
@@ -63,8 +63,8 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-    "error": 0,
-    "msg": "ok"
+  "error": 0,
+  "msg": "ok"
 }
 ```
 
@@ -77,7 +77,7 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-	"identity":"test"
+  "identity":"test"
 }
 ```
 
@@ -95,17 +95,17 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-    "error": 0,
-    "data": {
-        "identity": "test",
-        "time": "* * * * * *",
-        "bash": "echo 1",
-        "start": true,
-        "zone": "Asia/Shanghai",
-        "running": true,
-        "nextDate": "2019-09-26T09:35:59.000Z",
-        "lastDate": "2019-09-26T09:35:58.002Z"
-    }
+"error": 0,
+  "data": {
+    "identity": "test",
+    "time": "* * * * * *",
+    "bash": "echo 1",
+    "start": true,
+    "zone": "Asia/Shanghai",
+    "running": true,
+    "nextDate": "2019-09-26T09:35:59.000Z",
+    "lastDate": "2019-09-26T09:35:58.002Z"
+  }
 }
 ```
 
@@ -120,10 +120,10 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-    "error": 0,
-    "data": [
-        "test"
-    ]
+  "error": 0,
+  "data": [
+    "test"
+  ]
 }
 ```
 
@@ -136,7 +136,7 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-	"identity":["test"]
+  "identity":["test"]
 }
 ```
 
@@ -153,19 +153,19 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-    "error": 0,
-    "data": [
-        {
-            "identity": "test",
-            "time": "* * * * * *",
-            "bash": "echo 1",
-            "start": true,
-            "zone": "Asia/Shanghai",
-            "running": true,
-            "nextDate": "2019-09-26T09:40:04.000Z",
-            "lastDate": "2019-09-26T09:40:03.000Z"
-        }
-    ]
+  "error": 0,
+  "data": [
+    {
+      "identity": "test",
+      "time": "* * * * * *",
+      "bash": "echo 1",
+      "start": true,
+      "zone": "Asia/Shanghai",
+      "running": true,
+      "nextDate": "2019-09-26T09:40:04.000Z",
+      "lastDate": "2019-09-26T09:40:03.000Z"
+    }
+  ]
 }
 ```
 
@@ -179,8 +179,8 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-	"identity":"test",
-	"status":false
+  "identity":"test",
+  "status":false
 }
 ```
 
@@ -190,8 +190,8 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-    "error": 0,
-    "msg": "ok"
+  "error": 0,
+  "msg": "ok"
 }
 ```
 
@@ -204,7 +204,7 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-	"identity":"test"
+  "identity":"test"
 }
 ```
 
@@ -214,8 +214,8 @@ Assume that the underlying request path is `http://localhost:3000`
 
 ```json
 {
-    "error": 0,
-    "msg": "ok"
+  "error": 0,
+  "msg": "ok"
 }
 ```
 
