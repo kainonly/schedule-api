@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { JobsService } from '../common/jobs.service';
-import { StorageService } from '../common/storage.service';
+import { LogsService } from '../common/logs.service';
 import { ConfigService } from '../common/config.service';
 
-const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService, storage: StorageService) => {
+const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService, logs: LogsService) => {
   /**
    * Temporary Jobs Storage
    */
@@ -105,12 +105,12 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
   }, async (request, reply) => {
     const body = request.body;
     const result: boolean = jobs.put(body);
-    const response = await storage.add({
+    const response = await logs.add({
       type: 'put',
       identity: body.identity,
-      response: body,
+      body,
       status: result,
-      create_time: (new Date()).getTime(),
+      time: (new Date()).getTime(),
     });
     temporaryJobs();
     if (result && response.statusCode === 201) {
@@ -142,12 +142,12 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
   }, async (request, reply) => {
     const body = request.body;
     const result: boolean = jobs.delete(body.identity);
-    const response = await storage.add({
+    const response = await logs.add({
       type: 'delete',
       identity: body.identity,
-      response: body,
+      body,
       status: result,
-      create_time: (new Date()).getTime(),
+      time: (new Date()).getTime(),
     });
     if (result && response.statusCode === 201) {
       reply.send({
@@ -185,12 +185,11 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     } else {
       jobs.stop(body.identity);
     }
-    const response = await storage.add({
+    const response = await logs.add({
       type: 'status',
       identity: body.identity,
-      response: body,
-      status: true,
-      create_time: (new Date()).getTime(),
+      body,
+      time: (new Date()).getTime(),
     });
     if (response.statusCode === 201) {
       reply.send({
@@ -207,10 +206,10 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
   /**
    * Get Logging
    */
-  fastify.post('/logging', {
+  fastify.post('/search', {
     schema: {
       body: {
-        required: ['identity', 'create_time', 'limit', 'skip'],
+        required: ['identity', 'time', 'limit', 'skip'],
         properties: {
           type: {
             type: 'string',
@@ -236,14 +235,13 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     },
   }, async (request, reply) => {
     const body = request.body;
-    const response = await storage.search(
+    const response = await logs.search(
       body.type,
       body.identity,
-      body.create_time,
+      body.time,
       body.limit,
       body.skip,
     );
-    console.log(response.body);
     reply.send({
       error: 0,
       data: response.body,

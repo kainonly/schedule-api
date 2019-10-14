@@ -14,22 +14,6 @@ docker pull kainonly/schedule-api
 
 ## Docker Compose
 
-`1.x` branch example
-
-```yml
-version: '3.7'
-services:
-  schedule:
-    image: kainonly/schedule-api
-    restart: always
-    volumes: 
-      - ./schedule:/app/storage
-    ports:
-      - 3000:3000
-```
-
-now
-
 ```yml
 version: '3.7'
 services:
@@ -47,7 +31,6 @@ services:
 ## Environment
 
 - **ELASTIC** `string` elasticsearch url
-- **STORAGE** `string` leveldb storage path, default `/app/storage/logs` (`1.x` branch)
 
 ## Api docs
 
@@ -130,6 +113,19 @@ Assume that the underlying request path is `http://localhost:3000`
 
 - url `/all`
 - method `POST`
+- body `none`
+- response
+  - **error** `number` status
+  - **data** `array` identity array
+
+```json
+{
+    "error": 0,
+    "data": [
+        "test"
+    ]
+}
+```
 
 #### Lists Job
 
@@ -223,15 +219,15 @@ Assume that the underlying request path is `http://localhost:3000`
 }
 ```
 
-#### Logging Data
+#### Search Logs
 
-- url `/logging`
+- url `/search`
 - method `POST`
 - body
   - **type** `string` Logging Type, All if not present
     - 'put', 'delete', 'status', 'run', 'error'
   - **identity** `string` Job identity
-  - **create_time** `object`
+  - **time** `object`
     - **lt** `number` Match fields "less than" this one.
     - **gt** `number` Match fields "greater than" this one.
     - **lte** `number` Match fields "less than or equal to" this one.
@@ -241,24 +237,84 @@ Assume that the underlying request path is `http://localhost:3000`
   - **limit** `number` Page limit
   - **skip** `number` Page Number
 
+Get Range Logs
+
 ```json
 {
-	"identity":"test",
-	"create_time":{
-        "lt":1570701566010,
-        "gt":1570701564010
+	"identity": "test",
+	"time": {
+      "lt":1570701566010,
+      "gt":1570701564010
 	},
-	"limit":20,
-	"skip":0
+	"limit": 10,
+	"skip": 0
 }
 ```
 
-`1.x` branch **create_time** diff
+Put `_source`
 
-- **create_time** `object`
-  - **$lt** `number` Match fields "less than" this one.
-  - **$gt** `number` Match fields "greater than" this one.
-  - **$lte** `number` Match fields "less than or equal to" this one.
-  - **$gte** `number` Match fields "greater than or equal to" this one.
-  - **$eq** `number` Match fields equal to this one.
-  - **$ne** `number` Match fields not equal to this one.
+```json
+{
+  "type": "put",
+  "identity": "test",
+  "body": {
+    "identity":"test",
+    "time":"* * * * * *",
+    "bash":"echo 1",
+    "start":true,
+    "zone":"Asia/Shanghai"
+  },
+  "status": true,
+  "time": 1571024492489,
+}
+```
+
+Delete `_source`
+
+```json
+{
+  "type": "delete",
+  "identity": "test",
+  "body": {
+    "identity":"test",
+  },
+  "status": true,
+  "time": 1571024493232,
+}
+```
+
+Status `_source`
+
+```json
+{
+  "type": "status",
+  "identity": "test",
+  "body": {
+    "identity":"test",
+    "status":false
+  },
+  "time": 1571024493282,
+}
+```
+
+Run `_source`
+
+```json
+{
+  "type": "run",
+  "identity": "test",
+  "result": "1\n",
+  "time": 1571018416012,
+}
+```
+
+Error `_source`
+
+```json
+{
+  "type": "error",
+  "identity": "test",
+  "result": "errors message.....",
+  "time": 1571018416012,
+}
+```

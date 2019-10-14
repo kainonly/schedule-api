@@ -44,12 +44,12 @@ export class JobsService {
       try {
         this.runtime.emit('default', {
           identity: jobParam.identity,
-          output: execSync(jobParam.bash).toString(),
+          result: execSync(jobParam.bash).toString(),
         });
       } catch (e) {
         this.runtime.emit('error', {
           identity: jobParam.identity,
-          output: e.message,
+          result: e.message,
         });
         this.stop(jobParam.identity);
       }

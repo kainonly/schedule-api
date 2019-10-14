@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { join } from 'path';
-import { StorageService } from './common/storage.service';
 import { JobsService } from './common/jobs.service';
+import { LogsService } from './common/logs.service';
 import { api } from './router/api';
 
 import { ConfigService } from './common/config.service';
@@ -9,7 +9,7 @@ import { ConfigService } from './common/config.service';
 export class AppModule {
   private config: ConfigService;
   private jobs: JobsService;
-  private storage: StorageService;
+  private logs: LogsService;
 
   static footRoot(fastify: FastifyInstance, options: any, done: any): void {
     const app = new AppModule(fastify);
@@ -31,7 +31,7 @@ export class AppModule {
   setProviders() {
     this.config = new ConfigService(join(__dirname, 'data', 'config.json'));
     this.jobs = new JobsService();
-    this.storage = new StorageService(this.fastify, 'schedule-service');
+    this.logs = new LogsService(this.fastify, 'schedule-service');
   }
 
   /**
@@ -50,7 +50,7 @@ export class AppModule {
    * Set Route
    */
   setRoute() {
-    api(this.fastify, this.jobs, this.config, this.storage);
+    api(this.fastify, this.jobs, this.config, this.logs);
   }
 
   /**
@@ -58,21 +58,19 @@ export class AppModule {
    */
   onChange() {
     this.jobs.runtime.on('default', (data) => {
-      this.storage.add({
+      this.logs.add({
         type: 'run',
         identity: data.identity,
-        output: data.output,
-        status: true,
-        create_time: (new Date()).getTime(),
+        result: data.result,
+        time: (new Date()).getTime(),
       });
     });
     this.jobs.runtime.on('errors', (data) => {
-      this.storage.add({
+      this.logs.add({
         type: 'error',
         identity: data.identity,
-        output: data.output,
-        status: true,
-        create_time: (new Date()).getTime(),
+        result: data.result,
+        time: (new Date()).getTime(),
       });
     });
   }
