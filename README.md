@@ -241,13 +241,13 @@ Get Range Logs
 
 ```json
 {
-	"identity": "test",
-	"time": {
-      "lt":1570701566010,
-      "gt":1570701564010
-	},
-	"limit": 10,
-	"skip": 0
+  "identity": "test",
+  "time": {
+    "lt":1570701566010,
+    "gt":1570701564010
+  },
+  "limit": 10,
+  "skip": 0
 }
 ```
 
