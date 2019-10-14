@@ -29,7 +29,7 @@ export class AppModule {
    * Set Providers
    */
   setProviders() {
-    this.config = new ConfigService(join(__dirname, 'config.json'));
+    this.config = new ConfigService(join(__dirname, 'data', 'config.json'));
     this.jobs = new JobsService();
     this.storage = new StorageService(this.fastify, 'schedule-service');
   }

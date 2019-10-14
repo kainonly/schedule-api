@@ -12,4 +12,6 @@ RUN cd /app \
 
 EXPOSE 3000
 
+VOLUME [ "app/data" ]
+
 CMD [ "node", "app.js" ]
