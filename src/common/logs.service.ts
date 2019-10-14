@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { Client } from '@elastic/elasticsearch';
-import { LogParam } from '../types/log-param';
 
-export class StorageService {
+export class LogsService {
   private client: Client;
 
   constructor(
@@ -12,19 +11,20 @@ export class StorageService {
     this.client = fastify.elastic;
   }
 
-  async add(logs: LogParam) {
+  /**
+   * Add Log Data
+   */
+  async add(data: any) {
     return await this.client.index({
       index: this.index,
-      body: {
-        type: logs.type,
-        identity: logs.identity,
-        output: logs.output,
-        create_time: logs.create_time,
-      },
+      body: data,
     });
   }
 
-  async search(type: string, identity: string, create_time: any, limit: number, skip: number) {
+  /**
+   * Search Log Data
+   */
+  async search(type: string, identity: string, time: any, limit: number, skip: number) {
     const query = {
       bool: {
         must: [],
@@ -44,10 +44,10 @@ export class StorageService {
         },
       });
     }
-    if (create_time) {
+    if (time) {
       query.bool.must.push({
         range: {
-          create_time,
+          time,
         },
       });
     }
@@ -58,7 +58,7 @@ export class StorageService {
         size: limit,
         from: skip,
         sort: {
-          create_time: {
+          time: {
             order: 'desc',
           },
         },
