@@ -36,8 +36,10 @@ services:
   schedule:
     image: kainonly/schedule-api
     restart: always
+    environment: 
+      ELASTIC: "http://elasticsearch:9200"
     volumes: 
-      - ./schedule/config.json:/app/config.json
+      - ./schedule:/app/data
     ports:
       - 3000:3000
 ```
