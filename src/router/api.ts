@@ -149,6 +149,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
       status: result,
       time: (new Date()).getTime(),
     });
+    temporaryJobs();
     if (result && response.statusCode === 201) {
       reply.send({
         error: 0,
@@ -246,6 +247,35 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
       error: 0,
       data: response.body,
     });
+  });
+  /**
+   * Clear logging
+   */
+  fastify.post('/clear', {
+    schema: {
+      body: {
+        required: ['identity'],
+        properties: {
+          identity: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  }, async (request, reply) => {
+    const body = request.body;
+    const response = await logs.clear(body.identity);
+    if (response.statusCode === 200) {
+      reply.send({
+        error: 0,
+        msg: 'ok',
+      });
+    } else {
+      reply.send({
+        error: 1,
+        msg: 'failed',
+      });
+    }
   });
 };
 

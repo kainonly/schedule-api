@@ -65,4 +65,21 @@ export class LogsService {
       },
     });
   }
+
+  /**
+   * Clear Log Data
+   * @param identity
+   */
+  async clear(identity: string) {
+    return await this.client.delete_by_query({
+      index: this.index,
+      body: {
+        query: {
+          match: {
+            identity,
+          },
+        },
+      },
+    });
+  }
 }

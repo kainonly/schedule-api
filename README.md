@@ -318,3 +318,27 @@ Error `_source`
   "time": 1571018416012,
 }
 ```
+
+#### Clear Logs
+
+- url `/clear`
+- method `POST`
+- body
+  - **identity** `string` Job identity
+
+```json
+{
+	"identity":"test"
+}
+```
+
+- response
+  - **error** `number` status
+  - **msg** `string` Message
+
+```json
+{
+  "error": 0,
+  "msg": "ok"
+}
+```

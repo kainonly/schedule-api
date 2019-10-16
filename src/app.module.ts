@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import { join } from 'path';
 import { JobsService } from './common/jobs.service';
 import { LogsService } from './common/logs.service';
 import { api } from './router/api';
@@ -29,7 +28,7 @@ export class AppModule {
    * Set Providers
    */
   setProviders() {
-    this.config = new ConfigService(join(__dirname, 'data', 'config.json'));
+    this.config = new ConfigService(__dirname);
     this.jobs = new JobsService();
     this.logs = new LogsService(this.fastify, 'schedule-service');
   }

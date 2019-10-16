@@ -1,15 +1,16 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
 export class ConfigService {
   private file: string;
   private config: any;
 
-  constructor(file: string) {
-    this.file = file;
-    if (!existsSync(file)) {
-      writeFileSync(file, JSON.stringify({}));
+  constructor(target: string) {
+    this.file = join(target, 'data', 'config.json');
+    if (!existsSync(this.file)) {
+      writeFileSync(this.file, JSON.stringify({}));
     } else {
-      this.config = JSON.parse(readFileSync(file).toString());
+      this.config = JSON.parse(readFileSync(this.file).toString());
     }
   }
 
