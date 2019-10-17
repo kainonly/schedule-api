@@ -1,13 +1,17 @@
 import { FastifyInstance } from 'fastify';
-import { JobsService } from './common/jobs.service';
+import { EventEmitter } from 'events';
+import * as got from 'got';
+import { env } from 'process';
+import { ConfigService } from './common/config.service';
+import { TasksService } from './common/tasks.service';
 import { LogsService } from './common/logs.service';
+import { TaskOptions } from './types/task-options';
 import { api } from './router/api';
 
-import { ConfigService } from './common/config.service';
-
 export class AppModule {
+  private events: EventEmitter = new EventEmitter();
   private config: ConfigService;
-  private jobs: JobsService;
+  private tasks: TasksService;
   private logs: LogsService;
 
   static footRoot(fastify: FastifyInstance, options: any, done: any): void {
@@ -15,7 +19,6 @@ export class AppModule {
     app.setProviders();
     app.onInit();
     app.setRoute();
-    app.onChange();
     done();
   }
 
@@ -29,8 +32,11 @@ export class AppModule {
    */
   setProviders() {
     this.config = new ConfigService(__dirname);
-    this.jobs = new JobsService();
-    this.logs = new LogsService(this.fastify, 'schedule-service');
+    this.tasks = new TasksService(this.events);
+    this.logs = new LogsService(
+      this.fastify,
+      env.ELASTIC_INDEX ? env.ELASTIC_INDEX : 'schedule-service',
+    );
   }
 
   /**
@@ -40,37 +46,39 @@ export class AppModule {
     const configs = this.config.get();
     for (const key in configs) {
       if (configs.hasOwnProperty(key)) {
-        this.jobs.put(configs[key]);
+        this.tasks.put(configs[key]);
       }
     }
+    this.events.on('tick', async (options: TaskOptions) => {
+      try {
+        const response = await got.post(options.url, {
+          json: true,
+          headers: options.headers,
+          body: options.body,
+        });
+        this.logs.add({
+          type: 'success',
+          identity: options.identity,
+          url: response.requestUrl,
+          headers: response.headers,
+          body: response.body,
+          time: (new Date()).getTime(),
+        });
+      } catch (e) {
+        this.logs.add({
+          type: 'error',
+          identity: options.identity,
+          message: e.message,
+          time: (new Date()).getTime(),
+        });
+      }
+    });
   }
 
   /**
    * Set Route
    */
   setRoute() {
-    api(this.fastify, this.jobs, this.config, this.logs);
-  }
-
-  /**
-   * On Event Change
-   */
-  onChange() {
-    this.jobs.runtime.on('default', (data) => {
-      this.logs.add({
-        type: 'run',
-        identity: data.identity,
-        result: data.result,
-        time: (new Date()).getTime(),
-      });
-    });
-    this.jobs.runtime.on('errors', (data) => {
-      this.logs.add({
-        type: 'error',
-        identity: data.identity,
-        result: data.result,
-        time: (new Date()).getTime(),
-      });
-    });
+    api(this.fastify, this.tasks, this.config, this.logs);
   }
 }
