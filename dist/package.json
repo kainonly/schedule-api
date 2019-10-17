@@ -10,13 +10,16 @@
     "cron": "^1.7.2",
     "fastify": "^2.8.0",
     "fastify-compress": "^0.11.0",
-    "fastify-elasticsearch": "^1.0.0"
+    "fastify-elasticsearch": "^1.0.0",
+    "got": "^9.6.0",
+    "timezone-support": "^2.0.2"
   },
   "devDependencies": {
+    "@elastic/elasticsearch": "^7.4.0",
     "@types/cron": "^1.7.1",
+    "@types/got": "^9.6.7",
     "@types/node": "^12.7.7",
     "@types/webpack": "^4.4.32",
-    "@elastic/elasticsearch": "^7.4.0",
     "cpy-cli": "^2.0.0",
     "prettier": "1.17.0",
     "rimraf": "^3.0.0",

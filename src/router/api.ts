@@ -1,23 +1,25 @@
 import { FastifyInstance } from 'fastify';
-import { JobsService } from '../common/jobs.service';
+import { findTimeZone } from 'timezone-support';
+import { TasksService } from '../common/tasks.service';
 import { LogsService } from '../common/logs.service';
 import { ConfigService } from '../common/config.service';
 
-const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService, logs: LogsService) => {
+const api = (fastify: FastifyInstance, tasks: TasksService, config: ConfigService, logs: LogsService) => {
   /**
-   * Temporary Jobs Storage
+   * Temporary synchronization task
    */
-  function temporaryJobs() {
-    config.set(jobs.getJobs());
+  function temporaryTasks() {
+    config.set(tasks.getTasks());
   }
 
   /**
-   * Get All Identity
+   * Get the identity of all tasks
    */
   fastify.post('/all', async (request, reply) => {
     const identity = [];
-    for (const key in jobs.getJobs()) {
-      if (jobs.getJobs().hasOwnProperty(key)) {
+    const tasksObjects = tasks.getTasks();
+    for (const key in tasksObjects) {
+      if (tasksObjects.hasOwnProperty(key)) {
         identity.push(key);
       }
     }
@@ -27,7 +29,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     });
   });
   /**
-   * Lists Jobs
+   * Get a list of job information for the task identity
    */
   fastify.post('/lists', {
     schema: {
@@ -44,11 +46,11 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     const body = request.body;
     reply.send({
       error: 0,
-      data: body.identity.map((v: any) => jobs.get(v)),
+      data: body.identity.map((v: any) => tasks.get(v)),
     });
   });
   /**
-   * Get Job
+   * Get a job information for the task identity
    */
   fastify.post('/get', {
     schema: {
@@ -63,7 +65,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     },
   }, async (request, reply) => {
     const body = request.body;
-    const result = jobs.get(body.identity);
+    const result = tasks.get(body.identity);
     if (result) {
       reply.send({
         error: 0,
@@ -77,26 +79,32 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     }
   });
   /**
-   * Put Job
+   * Update or create a task to automatically request execution services
    */
   fastify.post('/put', {
     schema: {
       body: {
-        required: ['identity', 'time', 'bash', 'start', 'zone'],
+        required: ['identity', 'cron_time', 'url', 'time_zone'],
         properties: {
           identity: {
             type: 'string',
           },
-          time: {
+          cron_time: {
             type: 'string',
           },
-          bash: {
+          url: {
             type: 'string',
+          },
+          headers: {
+            type: 'object',
+          },
+          body: {
+            type: 'object',
           },
           start: {
             type: 'boolean',
           },
-          zone: {
+          time_zone: {
             type: 'string',
           },
         },
@@ -104,16 +112,25 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     },
   }, async (request, reply) => {
     const body = request.body;
-    const result: boolean = jobs.put(body);
+    if (body.cron_time.split(' ').filter(v => v !== '').length !== 6) {
+      reply.send({
+        error: 1,
+        msg: 'Cron job failures can be disastrous!',
+      });
+      return;
+    }
+    Reflect.set(body, 'start', body.start ? body.start : true);
+    findTimeZone(body.time_zone);
+    const result: boolean = tasks.put(body);
     const response = await logs.add({
       type: 'put',
       identity: body.identity,
       body,
-      status: result,
+      action: result,
       time: (new Date()).getTime(),
     });
-    temporaryJobs();
     if (result && response.statusCode === 201) {
+      temporaryTasks();
       reply.send({
         error: 0,
         msg: 'ok',
@@ -126,7 +143,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     }
   });
   /**
-   * Delete Job
+   * Stop and delete the task
    */
   fastify.post('/delete', {
     schema: {
@@ -141,16 +158,16 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     },
   }, async (request, reply) => {
     const body = request.body;
-    const result: boolean = jobs.delete(body.identity);
+    const result: boolean = tasks.delete(body.identity);
     const response = await logs.add({
       type: 'delete',
       identity: body.identity,
       body,
-      status: result,
+      action: result,
       time: (new Date()).getTime(),
     });
-    temporaryJobs();
     if (result && response.statusCode === 201) {
+      temporaryTasks();
       reply.send({
         error: 0,
         msg: 'ok',
@@ -163,17 +180,17 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     }
   });
   /**
-   * Change Job Status
+   * Change the job running status of the task
    */
-  fastify.post('/status', {
+  fastify.post('/running', {
     schema: {
       body: {
-        required: ['identity', 'status'],
+        required: ['identity', 'running'],
         properties: {
           identity: {
             type: 'string',
           },
-          status: {
+          running: {
             type: 'boolean',
           },
         },
@@ -181,13 +198,13 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     },
   }, async (request, reply) => {
     const body = request.body;
-    if (body.status) {
-      jobs.start(body.identity);
+    if (body.running) {
+      tasks.start(body.identity);
     } else {
-      jobs.stop(body.identity);
+      tasks.stop(body.identity);
     }
     const response = await logs.add({
-      type: 'status',
+      type: 'running',
       identity: body.identity,
       body,
       time: (new Date()).getTime(),
@@ -205,7 +222,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     }
   });
   /**
-   * Get Logging
+   * Query the log related to the acquisition task
    */
   fastify.post('/search', {
     schema: {
@@ -214,7 +231,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
         properties: {
           type: {
             type: 'string',
-            enum: ['put', 'delete', 'status', 'run', 'error'],
+            enum: ['put', 'delete', 'running', 'success', 'error'],
           },
           identity: {
             type: 'string',
@@ -249,7 +266,7 @@ const api = (fastify: FastifyInstance, jobs: JobsService, config: ConfigService,
     });
   });
   /**
-   * Clear logging
+   * Clear all logs for a task
    */
   fastify.post('/clear', {
     schema: {

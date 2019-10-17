@@ -30,30 +30,36 @@ services:
 
 ## Environment
 
-- **ELASTIC** `string` elasticsearch url
+- **ELASTIC** `string` Elasticsearch service url
+- **ELASTIC_INDEX** `string` Storage index, default `schedule-service`
 
 ## Api docs
 
 Assume that the underlying request path is `http://localhost:3000`
 
-#### Put Job
+#### Put Task
+
+Update or create a task to automatically request execution services
 
 - url `/put`
 - method `POST`
 - body
-  - **identity** `string` Job identity
-  - **time** `string` Cron rule
-  - **bash** `string` Exec base
-  - **start** `boolean` Begin execution
-  - **zone** `string` Timezone
+  - **identity** `string` Task identity
+  - **cron_time** `string` CronTab Rule, More seconds than regular
+  - **url** `string` URL to send POST request
+  - **headers** `object` Request headers, Can be empty
+  - **body** `object` Request body, Can be empty
+  - **start** `boolean` Begin execution, default `true`
+  - **time_zone** `string` [Timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+> You might find something like [crontab.guru](https://crontab.guru/) helpful
 
 ```json
 {
-  "identity":"test",
-  "time":"* * * * * *",
-  "bash":"echo 1",
-  "start":true,
-  "zone":"Asia/Shanghai"
+	"identity":"test",
+	"cron_time":"*/30 * * * * *",
+	"url":"https://api.developer.com/subscription",
+	"time_zone":"Asia/Shanghai"
 }
 ```
 
@@ -68,12 +74,14 @@ Assume that the underlying request path is `http://localhost:3000`
 }
 ```
 
-#### Get Job
+#### Get Task
+
+Get a job information for the task identity
 
 - url `/get`
 - method `POST`
 - body
-  - **identity** `string` Job identity
+  - **identity** `string` Task identity
 
 ```json
 {
@@ -84,32 +92,36 @@ Assume that the underlying request path is `http://localhost:3000`
 - response
   - **error** `number` status
   - **data**
-    - **identity** `string` Job identity
-    - **time** `string` Cron rule
-    - **bash** `string` Exec base
+    - **identity** `string` Task identity
+    - **cron_time** `string` CronTab Rule, More seconds than regular
+    - **url** `string` URL to send POST request
+    - **headers** `object` Request headers, Can be empty
+    - **body** `object` Request body, Can be empty
     - **start** `boolean` Begin execution
-    - **zone** `string` Timezone
+    - **time_zone** `string` Timezone
     - **running** `boolean` Running status
     - **nextDate** `Date` Next run date
     - **lastDate** `Date` Last run date
 
 ```json
 {
-"error": 0,
+  "error": 0,
   "data": {
-    "identity": "test",
-    "time": "* * * * * *",
-    "bash": "echo 1",
-    "start": true,
-    "zone": "Asia/Shanghai",
-    "running": true,
-    "nextDate": "2019-09-26T09:35:59.000Z",
-    "lastDate": "2019-09-26T09:35:58.002Z"
+      "identity": "test",
+      "cron_time": "*/30 * * * * *",
+      "url": "https://api.developer.com/subscription",
+      "time_zone": "Asia/Shanghai",
+      "start": true,
+      "running": true,
+      "nextDate": "2019-10-17T03:28:30.000Z",
+      "lastDate": "2019-10-17T03:28:00.000Z"
   }
 }
 ```
 
-#### Get All Identity
+#### All Tasks Identity
+
+Get the identity of all tasks
 
 - url `/all`
 - method `POST`
@@ -127,12 +139,14 @@ Assume that the underlying request path is `http://localhost:3000`
 }
 ```
 
-#### Lists Job
+#### Lists Tasks
+
+Get a list of job information for the task identity
 
 - url `/lists`
 - method `POST`
 - body
-  - **identity** `string[]` Jobs identity array
+  - **identity** `string[]` Tasks identity array
 
 ```json
 {
@@ -142,11 +156,13 @@ Assume that the underlying request path is `http://localhost:3000`
 
 - response
   - **data** `array`
-    - **identity** `string` Job identity
-    - **time** `string` Cron rule
-    - **bash** `string` Exec base
+    - **identity** `string` Task identity
+    - **cron_time** `string` CronTab Rule, More seconds than regular, 
+    - **url** `string` URL to send POST request
+    - **headers** `object` Request headers, Can be empty
+    - **body** `object` Request body, Can be empty
     - **start** `boolean` Begin execution
-    - **zone** `string` Timezone
+    - **time_zone** `string` Timezone
     - **running** `boolean` Running status
     - **nextDate** `Date` Next run date
     - **lastDate** `Date` Last run date
@@ -156,14 +172,14 @@ Assume that the underlying request path is `http://localhost:3000`
   "error": 0,
   "data": [
     {
-      "identity": "test",
-      "time": "* * * * * *",
-      "bash": "echo 1",
-      "start": true,
-      "zone": "Asia/Shanghai",
-      "running": true,
-      "nextDate": "2019-09-26T09:40:04.000Z",
-      "lastDate": "2019-09-26T09:40:03.000Z"
+        "identity": "test",
+        "cron_time": "*/30 * * * * *",
+        "url": "https://api.developer.com/subscription",
+        "time_zone": "Asia/Shanghai",
+        "start": true,
+        "running": true,
+        "nextDate": "2019-10-17T03:32:30.000Z",
+        "lastDate": "2019-10-17T03:32:00.000Z"
     }
   ]
 }
@@ -171,16 +187,18 @@ Assume that the underlying request path is `http://localhost:3000`
 
 #### Change Running Status
 
-- url `/status`
+Change the job running status of the task
+
+- url `/running`
 - method `POST`
 - body
-  - **identity** `string` Job identity
-  - **status** `boolean` Job running status
+  - **identity** `string` Task identity
+  - **running** `boolean` Running status
 
 ```json
 {
-  "identity":"test",
-  "status":false
+	"identity":"test",
+	"running":true
 }
 ```
 
@@ -195,12 +213,14 @@ Assume that the underlying request path is `http://localhost:3000`
 }
 ```
 
-#### Delete Job
+#### Delete Task
+
+Stop and delete the task
 
 - url `/delete`
 - method `POST`
 - body
-  - **identity** `string` Job identity
+  - **identity** `string` Task identity
 
 ```json
 {
@@ -221,11 +241,13 @@ Assume that the underlying request path is `http://localhost:3000`
 
 #### Search Logs
 
+Query the log related to the acquisition task
+
 - url `/search`
 - method `POST`
 - body
   - **type** `string` Logging Type, All if not present
-    - 'put', 'delete', 'status', 'run', 'error'
+    - 'put', 'delete', 'running', 'success', 'error'
   - **identity** `string` Job identity
   - **time** `object`
     - **lt** `number` Match fields "less than" this one.
@@ -243,8 +265,8 @@ Get Range Logs
 {
   "identity": "test",
   "time": {
-    "lt":1570701566010,
-    "gt":1570701564010
+    "lt":1571295272000,
+    "gt":1571295271000
   },
   "limit": 10,
   "skip": 0
@@ -258,14 +280,14 @@ Put `_source`
   "type": "put",
   "identity": "test",
   "body": {
-    "identity":"test",
-    "time":"* * * * * *",
-    "bash":"echo 1",
-    "start":true,
-    "zone":"Asia/Shanghai"
+    "identity": "test",
+    "cron_time": "* */5 * * * *",
+    "url": "https://api.developer.com/subscription",
+    "time_zone": "Asia/Shanghai",
+    "start": true
   },
-  "status": true,
-  "time": 1571024492489,
+  "action": true,
+  "time": 1571295271483
 }
 ```
 
@@ -276,35 +298,54 @@ Delete `_source`
   "type": "delete",
   "identity": "test",
   "body": {
-    "identity":"test",
+    "identity": "test"
   },
-  "status": true,
-  "time": 1571024493232,
+  "action": true,
+  "time": 1571299147117
 }
 ```
 
-Status `_source`
+Running `_source`
 
 ```json
 {
-  "type": "status",
+  "type": "running",
   "identity": "test",
   "body": {
-    "identity":"test",
-    "status":false
+    "identity": "test",
+    "running": false
   },
-  "time": 1571024493282,
+  "time": 1571295299629
 }
 ```
 
-Run `_source`
+Success `_source`
 
 ```json
 {
-  "type": "run",
+  "type": "success",
   "identity": "test",
-  "result": "1\n",
-  "time": 1571018416012,
+  "url": "https://api.developer.com/subscription",
+  "headers": {
+    "server": "Tengine",
+    "content-type": "application/json; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "close",
+    "strict-transport-security": "max-age=5184000",
+    "date": "Thu, 17 Oct 2019 07:05:59 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN",
+    "x-xss-protection": "1; mode=block",
+    "x-content-type-options": "nosniff",
+    "content-encoding": "gzip",
+    "via": "cache2.l2cn1800[29,0], kunlun2.cn2466[52,0]",
+    "timing-allow-origin": "*",
+    "eagleid": "7ce1a71615712959590353713e"
+  },
+  "body": {
+    "status": 1
+  },
+  "time": 1571295959073
 }
 ```
 
@@ -314,17 +355,19 @@ Error `_source`
 {
   "type": "error",
   "identity": "test",
-  "result": "errors message.....",
-  "time": 1571018416012,
+  "message": "Response code 404 (Not Found)",
+  "time": 1571298950112
 }
 ```
 
 #### Clear Logs
 
+Clear all logs for a task
+
 - url `/clear`
 - method `POST`
 - body
-  - **identity** `string` Job identity
+  - **identity** `string` Task identity
 
 ```json
 {

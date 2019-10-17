@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
 export class ConfigService {
@@ -6,7 +6,11 @@ export class ConfigService {
   private config: any;
 
   constructor(target: string) {
-    this.file = join(target, 'data', 'config.json');
+    const directory = join(target, 'data');
+    if (!existsSync(directory)) {
+      mkdirSync(directory);
+    }
+    this.file = join(directory, 'config.json');
     if (!existsSync(this.file)) {
       writeFileSync(this.file, JSON.stringify({}));
     } else {
