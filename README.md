@@ -56,10 +56,10 @@ Update or create a task to automatically request execution services
 
 ```json
 {
-	"identity":"test",
-	"cron_time":"*/30 * * * * *",
-	"url":"https://api.developer.com/subscription",
-	"time_zone":"Asia/Shanghai"
+  "identity":"test",
+  "cron_time":"*/30 * * * * *",
+  "url":"https://api.developer.com/subscription",
+  "time_zone":"Asia/Shanghai"
 }
 ```
 
@@ -107,14 +107,14 @@ Get a job information for the task identity
 {
   "error": 0,
   "data": {
-      "identity": "test",
-      "cron_time": "*/30 * * * * *",
-      "url": "https://api.developer.com/subscription",
-      "time_zone": "Asia/Shanghai",
-      "start": true,
-      "running": true,
-      "nextDate": "2019-10-17T03:28:30.000Z",
-      "lastDate": "2019-10-17T03:28:00.000Z"
+    "identity": "test",
+    "cron_time": "*/30 * * * * *",
+    "url": "https://api.developer.com/subscription",
+    "time_zone": "Asia/Shanghai",
+    "start": true,
+    "running": true,
+    "nextDate": "2019-10-17T03:28:30.000Z",
+    "lastDate": "2019-10-17T03:28:00.000Z"
   }
 }
 ```
@@ -172,14 +172,14 @@ Get a list of job information for the task identity
   "error": 0,
   "data": [
     {
-        "identity": "test",
-        "cron_time": "*/30 * * * * *",
-        "url": "https://api.developer.com/subscription",
-        "time_zone": "Asia/Shanghai",
-        "start": true,
-        "running": true,
-        "nextDate": "2019-10-17T03:32:30.000Z",
-        "lastDate": "2019-10-17T03:32:00.000Z"
+      "identity": "test",
+      "cron_time": "*/30 * * * * *",
+      "url": "https://api.developer.com/subscription",
+      "time_zone": "Asia/Shanghai",
+      "start": true,
+      "running": true,
+      "nextDate": "2019-10-17T03:32:30.000Z",
+      "lastDate": "2019-10-17T03:32:00.000Z"
     }
   ]
 }
@@ -197,8 +197,8 @@ Change the job running status of the task
 
 ```json
 {
-	"identity":"test",
-	"running":true
+  "identity":"test",
+  "running":true
 }
 ```
 
@@ -371,7 +371,7 @@ Clear all logs for a task
 
 ```json
 {
-	"identity":"test"
+  "identity":"test"
 }
 ```
 
