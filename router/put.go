@@ -6,15 +6,8 @@ import (
 	"schedule-api/common"
 )
 
-type putBody struct {
-	Identity string              `json:"identity" validate:"required"`
-	TimeZone string              `json:"time_zone" validate:"required"`
-	Start    bool                `json:"start" validate:"required"`
-	Tasks    []common.TaskOption `json:"tasks" validate:"required,dive,required"`
-}
-
 func (r *router) PutRoute(ctx iris.Context) {
-	var body putBody
+	var body common.TaskOption
 	ctx.ReadJSON(&body)
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
