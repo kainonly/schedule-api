@@ -1,13 +1,13 @@
 package router
 
-import "schedule-api/schedule"
+import "schedule-api/task"
 
 type router struct {
-	schedule schedule.Schedule
+	task task.Task
 }
 
-func Init(schedule *schedule.Schedule) *router {
+func Init(task *task.Task) *router {
 	return &router{
-		*schedule,
+		*task,
 	}
 }

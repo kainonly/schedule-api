@@ -19,8 +19,9 @@ func main() {
 	})
 	println(entryId1)
 	println(entryId2)
-
 	task.Start()
+
+	println(task.Entry(entryId1).Next.String())
 	time.Sleep(time.Duration(time.Second * 6))
 	task.Stop()
 }

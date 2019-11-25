@@ -3,12 +3,14 @@ package router
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
+	"schedule-api/common"
 )
 
 type putBody struct {
-	Identity string `json:"identity" validate:"required"`
-	Start    bool   `json:"start"`
-	TimeZone string `json:"passphrase"`
+	Identity string              `json:"identity" validate:"required"`
+	TimeZone string              `json:"time_zone" validate:"required"`
+	Start    bool                `json:"start" validate:"required"`
+	Tasks    []common.TaskOption `json:"tasks" validate:"required,dive,required"`
 }
 
 func (r *router) PutRoute(ctx iris.Context) {
