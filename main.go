@@ -7,7 +7,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"schedule-api/router"
-	"schedule-api/schedule"
+	"schedule-api/task"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 	app.Use(recover.New())
 	app.Use(logger.New())
 	routes := router.Init(
-		schedule.InjectSchedule(),
+		task.InjectSchedule(),
 	)
 	app.Post("put", routes.PutRoute)
 	app.Run(iris.Addr(":3000"), iris.WithoutServerError(iris.ErrServerClosed))
