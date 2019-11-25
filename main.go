@@ -22,5 +22,6 @@ func main() {
 		task.InjectSchedule(),
 	)
 	app.Post("put", routes.PutRoute)
+	app.Post("get", routes.GetRoute)
 	app.Run(iris.Addr(":3000"), iris.WithoutServerError(iris.ErrServerClosed))
 }
