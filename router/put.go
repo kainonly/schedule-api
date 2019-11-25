@@ -7,10 +7,20 @@ import (
 )
 
 func (r *router) PutRoute(ctx iris.Context) {
+	var err error
 	var body common.TaskOption
 	ctx.ReadJSON(&body)
 	validate := validator.New()
-	if err := validate.Struct(body); err != nil {
+	err = validate.Struct(body)
+	if err != nil {
+		ctx.JSON(iris.Map{
+			"error": 1,
+			"msg":   err.Error(),
+		})
+		return
+	}
+	err = r.task.Put(body)
+	if err != nil {
 		ctx.JSON(iris.Map{
 			"error": 1,
 			"msg":   err.Error(),
