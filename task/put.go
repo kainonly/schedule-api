@@ -13,8 +13,9 @@ func (c *Task) Put(option common.TaskOption) (err error) {
 	if err != nil {
 		return
 	}
+	c.close(identity)
+	c.options[identity] = &option
 	c.runtime[identity] = cron.New(cron.WithSeconds(), cron.WithLocation(timezone))
-	c.options[identity] = option.Entries
 	c.entries[identity] = make(map[string]cron.EntryID)
 	for key := range option.Entries {
 		go c.webhook(identity, key)
@@ -27,7 +28,7 @@ func (c *Task) Put(option common.TaskOption) (err error) {
 
 func (c *Task) webhook(identity string, key string) {
 	var err error
-	option := c.options[identity][key]
+	option := c.options[identity].Entries[key]
 	c.entries[identity][key], err = c.runtime[identity].AddFunc(option.CronTime, func() {
 		agent := gorequest.New().Post(option.Url)
 		if option.Headers != nil {
