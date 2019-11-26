@@ -25,9 +25,10 @@ func main() {
 	app.Logger().SetLevel("debug")
 	app.Use(recover.New())
 	app.Use(logger.New())
+	es := elastic.Init(cfg.Section("elasticsearch"))
 	routes := router.Init(
-		task.Inject(),
-		elastic.Inject(cfg.Section("elasticsearch")),
+		task.Inject(es),
+		es,
 	)
 	app.Post("put", routes.PutRoute)
 	app.Post("get", routes.GetRoute)

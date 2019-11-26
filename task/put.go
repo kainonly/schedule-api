@@ -41,9 +41,33 @@ func (c *Task) webhook(identity string, key string) {
 		}
 		_, body, errs := agent.End()
 		if errs != nil {
-			return
+			var message []string
+			for _, value := range errs {
+				message = append(message, value.Error())
+			}
+			//common.Record <- common.RecordError{
+			//	Type:     "error",
+			//	Identity: identity,
+			//	Key:      key,
+			//	Url:      option.Url,
+			//	Header:   option.Headers,
+			//	Body:     option.Body,
+			//	Message:  message,
+			//	Time:     time.Now(),
+			//}
+		} else {
+			println(body)
+			//common.Record <- common.RecordSuccess{
+			//	Type:     "success",
+			//	Identity: identity,
+			//	Key:      key,
+			//	Url:      option.Url,
+			//	Header:   option.Headers,
+			//	Body:     option.Body,
+			//	Response: body,
+			//	Time:     time.Now(),
+			//}
 		}
-		println(body)
 	})
 	if err != nil {
 		return
