@@ -4,6 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"schedule-api/common"
+	"time"
 )
 
 func (r *router) PutRoute(ctx iris.Context) {
@@ -27,8 +28,21 @@ func (r *router) PutRoute(ctx iris.Context) {
 		})
 		return
 	}
-	ctx.JSON(iris.Map{
-		"error": 0,
-		"msg":   "ok",
+	err = r.elastic.Index(common.Logs{
+		Type:     "put",
+		Identity: body.Identity,
+		Body:     body,
+		Time:     time.Now(),
 	})
+	if err != nil {
+		ctx.JSON(iris.Map{
+			"error": 1,
+			"msg":   err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.Map{
+			"error": 0,
+			"msg":   "ok",
+		})
+	}
 }
