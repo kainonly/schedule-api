@@ -19,6 +19,10 @@ func InjectSchedule() *Task {
 	return task
 }
 
+func (c *Task) GetTaskOptions() map[string]*common.TaskOption {
+	return c.options
+}
+
 func (c *Task) close(identity string) {
 	if c.runtime[identity] == nil {
 		return
@@ -29,8 +33,4 @@ func (c *Task) close(identity string) {
 		}
 	}
 	c.runtime[identity].Stop()
-}
-
-func (c *Task) GetTaskOptions() map[string]*common.TaskOption {
-	return c.options
 }
