@@ -11,7 +11,7 @@ type Task struct {
 	entries map[string]map[string]cron.EntryID
 }
 
-func InjectSchedule() *Task {
+func Inject() *Task {
 	task := new(Task)
 	task.runtime = make(map[string]*cron.Cron)
 	task.options = make(map[string]*common.TaskOption)
