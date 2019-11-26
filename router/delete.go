@@ -3,6 +3,8 @@ package router
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
+	"schedule-api/common"
+	"time"
 )
 
 type deleteBody struct {
@@ -23,8 +25,21 @@ func (r *router) DeleteRoute(ctx iris.Context) {
 		return
 	}
 	r.task.Delete(body.Identity)
-	ctx.JSON(iris.Map{
-		"error": 0,
-		"msg":   "ok",
+	err = r.elastic.Index(common.Logs{
+		Type:     "delete",
+		Identity: body.Identity,
+		Body:     body,
+		Time:     time.Now(),
 	})
+	if err != nil {
+		ctx.JSON(iris.Map{
+			"error": 1,
+			"msg":   err.Error(),
+		})
+	} else {
+		ctx.JSON(iris.Map{
+			"error": 0,
+			"msg":   "ok",
+		})
+	}
 }

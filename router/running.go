@@ -3,6 +3,8 @@ package router
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
+	"schedule-api/common"
+	"time"
 )
 
 type runningBody struct {
@@ -24,6 +26,19 @@ func (r *router) RunningRoute(ctx iris.Context) {
 		return
 	}
 	err = r.task.Running(body.Identity, *body.Running)
+	if err != nil {
+		ctx.JSON(iris.Map{
+			"error": 1,
+			"msg":   err.Error(),
+		})
+		return
+	}
+	err = r.elastic.Index(common.Logs{
+		Type:     "running",
+		Identity: body.Identity,
+		Body:     body,
+		Time:     time.Now(),
+	})
 	if err != nil {
 		ctx.JSON(iris.Map{
 			"error": 1,

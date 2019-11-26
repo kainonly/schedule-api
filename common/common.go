@@ -17,3 +17,10 @@ type EntryOption struct {
 	NextDate time.Time         `json:"next_date"`
 	LastDate time.Time         `json:"last_date"`
 }
+
+type Logs struct {
+	Type     string      `json:"type"`
+	Identity string      `json:"identity"`
+	Body     interface{} `json:"body"`
+	Time     time.Time   `json:"time"`
+}
