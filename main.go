@@ -23,5 +23,7 @@ func main() {
 	)
 	app.Post("put", routes.PutRoute)
 	app.Post("get", routes.GetRoute)
+	app.Post("lists", routes.ListsRoute)
+	app.Post("all", routes.AllRoute)
 	app.Run(iris.Addr(":3000"), iris.WithoutServerError(iris.ErrServerClosed))
 }

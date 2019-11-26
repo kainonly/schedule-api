@@ -30,3 +30,7 @@ func (c *Task) close(identity string) {
 	}
 	c.runtime[identity].Stop()
 }
+
+func (c *Task) GetTaskOptions() map[string]*common.TaskOption {
+	return c.options
+}
