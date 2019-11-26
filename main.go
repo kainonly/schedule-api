@@ -26,5 +26,6 @@ func main() {
 	app.Post("lists", routes.ListsRoute)
 	app.Post("all", routes.AllRoute)
 	app.Post("running", routes.RunningRoute)
+	app.Post("delete", routes.DeleteRoute)
 	app.Run(iris.Addr(":3000"), iris.WithoutServerError(iris.ErrServerClosed))
 }
