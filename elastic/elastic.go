@@ -9,11 +9,13 @@ import (
 
 type Elastic struct {
 	client *elasticsearch.Client
+	index  string
 }
 
 func Inject(config *ini.Section) *Elastic {
 	var err error
 	elastic := new(Elastic)
+	elastic.index = config.Key("default_index").String()
 	cfg := elasticsearch.Config{
 		Addresses: strings.Split(config.Key("hosts").String(), ","),
 		Username:  config.Key("username").String(),

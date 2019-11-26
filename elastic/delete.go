@@ -7,15 +7,15 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
 
-func (c *Elastic) Index(data interface{}) (err error) {
+func (c *Elastic) Delete(query interface{}) (err error) {
 	var buf bytes.Buffer
 	var res *esapi.Response
-	err = json.NewEncoder(&buf).Encode(data)
+	err = json.NewEncoder(&buf).Encode(query)
 	if err != nil {
 		return
 	}
-	res, err = c.client.Index(
-		c.index,
+	res, err = c.client.DeleteByQuery(
+		[]string{c.index},
 		&buf,
 	)
 	if err != nil {
