@@ -34,7 +34,6 @@ func Inject(config *ini.Section) *Elastic {
 
 func (c *Elastic) subscribe() {
 	for data := range common.Record {
-		println(data)
 		err := c.Index(data)
 		if err != nil {
 			println(err.Error())
