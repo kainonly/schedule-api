@@ -4,6 +4,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"gopkg.in/ini.v1"
 	"log"
+	"schedule-api/common"
 	"strings"
 )
 
@@ -27,5 +28,15 @@ func Inject(config *ini.Section) *Elastic {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	go elastic.subscribe()
 	return elastic
+}
+
+func (c *Elastic) subscribe() {
+	for data := range common.Record {
+		err := c.Index(data)
+		if err != nil {
+			println(err.Error())
+		}
+	}
 }

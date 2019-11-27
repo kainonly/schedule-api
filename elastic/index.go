@@ -21,6 +21,7 @@ func (c *Elastic) Index(data interface{}) (err error) {
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 	if res.IsError() {
 		return errors.New(res.Status())
 	}
