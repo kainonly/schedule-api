@@ -1,10 +1,16 @@
 package common
 
 import (
+	"encoding/json"
+	"github.com/syndtr/goleveldb/leveldb"
+	"log"
 	"time"
 )
 
-var Record chan interface{}
+var (
+	Record chan interface{}
+	db     *leveldb.DB
+)
 
 type (
 	TaskOption struct {
@@ -48,3 +54,31 @@ type (
 		Time     time.Time   `json:"time"`
 	}
 )
+
+// Initialize leveldb
+func InitLevelDB(path string) {
+	var err error
+	db, err = leveldb.OpenFile(path, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+// Set up temporary storage
+func SetTemporary(config map[string]*TaskOption) (err error) {
+	data, err := json.Marshal(config)
+	err = db.Put([]byte("temporary"), data, nil)
+	return
+}
+
+// Get temporary storage
+func GetTemporary() (config map[string]*TaskOption, err error) {
+	exists, err := db.Has([]byte("temporary"), nil)
+	if exists == false {
+		config = make(map[string]*TaskOption)
+		return
+	}
+	data, err := db.Get([]byte("temporary"), nil)
+	err = json.Unmarshal(data, &config)
+	return
+}

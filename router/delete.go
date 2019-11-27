@@ -24,7 +24,14 @@ func (r *router) DeleteRoute(ctx iris.Context) {
 		})
 		return
 	}
-	r.task.Delete(body.Identity)
+	err = r.task.Delete(body.Identity)
+	if err != nil {
+		ctx.JSON(iris.Map{
+			"error": 1,
+			"msg":   err.Error(),
+		})
+		return
+	}
 	err = r.elastic.Index(common.Logs{
 		Type:     "delete",
 		Identity: body.Identity,

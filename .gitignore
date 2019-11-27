@@ -23,4 +23,5 @@
 
 config.ini
 dist
+data
 go.sum

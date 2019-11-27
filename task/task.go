@@ -2,6 +2,7 @@ package task
 
 import (
 	"github.com/robfig/cron/v3"
+	"log"
 	"schedule-api/common"
 )
 
@@ -16,6 +17,16 @@ func Inject() *Task {
 	task.runtime = make(map[string]*cron.Cron)
 	task.options = make(map[string]*common.TaskOption)
 	task.entries = make(map[string]map[string]cron.EntryID)
+	configs, err := common.GetTemporary()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	for _, option := range configs {
+		err = task.Put(*option)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
 	return task
 }
 

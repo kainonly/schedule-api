@@ -26,6 +26,7 @@ func main() {
 	app.Logger().SetLevel("debug")
 	app.Use(recover.New())
 	app.Use(logger.New())
+	common.InitLevelDB("data")
 	common.Record = make(chan interface{})
 	routes := router.Init(
 		elastic.Inject(cfg.Section("elasticsearch")),
