@@ -12,7 +12,7 @@ type Elastic struct {
 	index  string
 }
 
-func Init(config *ini.Section) *Elastic {
+func Inject(config *ini.Section) *Elastic {
 	var err error
 	elastic := new(Elastic)
 	elastic.index = config.Key("default_index").String()

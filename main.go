@@ -25,10 +25,9 @@ func main() {
 	app.Logger().SetLevel("debug")
 	app.Use(recover.New())
 	app.Use(logger.New())
-	es := elastic.Init(cfg.Section("elasticsearch"))
 	routes := router.Init(
-		task.Inject(es),
-		es,
+		elastic.Inject(cfg.Section("elasticsearch")),
+		task.Inject(),
 	)
 	app.Post("put", routes.PutRoute)
 	app.Post("get", routes.GetRoute)
@@ -36,5 +35,8 @@ func main() {
 	app.Post("all", routes.AllRoute)
 	app.Post("running", routes.RunningRoute)
 	app.Post("delete", routes.DeleteRoute)
-	app.Run(iris.Addr(":3000"), iris.WithoutServerError(iris.ErrServerClosed))
+	app.Run(
+		iris.Addr(":3000"),
+		iris.WithoutServerError(iris.ErrServerClosed),
+	)
 }
