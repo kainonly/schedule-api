@@ -32,7 +32,7 @@ func (r *router) PutRoute(ctx iris.Context) {
 		Type:     "put",
 		Identity: body.Identity,
 		Body:     body,
-		Time:     time.Now(),
+		Time:     time.Now().Unix(),
 	})
 	if err != nil {
 		ctx.JSON(iris.Map{

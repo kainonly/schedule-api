@@ -36,7 +36,7 @@ func (r *router) DeleteRoute(ctx iris.Context) {
 		Type:     "delete",
 		Identity: body.Identity,
 		Body:     body,
-		Time:     time.Now(),
+		Time:     time.Now().Unix(),
 	})
 	if err != nil {
 		ctx.JSON(iris.Map{

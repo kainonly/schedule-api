@@ -37,7 +37,7 @@ func (r *router) RunningRoute(ctx iris.Context) {
 		Type:     "running",
 		Identity: body.Identity,
 		Body:     body,
-		Time:     time.Now(),
+		Time:     time.Now().Unix(),
 	})
 	if err != nil {
 		ctx.JSON(iris.Map{

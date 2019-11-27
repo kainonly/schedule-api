@@ -31,7 +31,7 @@ type (
 		Type     string      `json:"type"`
 		Identity string      `json:"identity"`
 		Body     interface{} `json:"body"`
-		Time     time.Time   `json:"time"`
+		Time     int64       `json:"time"`
 	}
 	RecordSuccess struct {
 		Type     string      `json:"type"`
@@ -41,7 +41,7 @@ type (
 		Header   interface{} `json:"header"`
 		Body     interface{} `json:"body"`
 		Response interface{} `json:"response"`
-		Time     time.Time   `json:"time"`
+		Time     int64       `json:"time"`
 	}
 	RecordError struct {
 		Type     string      `json:"type"`
@@ -51,7 +51,7 @@ type (
 		Header   interface{} `json:"header"`
 		Body     interface{} `json:"body"`
 		Message  []string    `json:"message"`
-		Time     time.Time   `json:"time"`
+		Time     int64       `json:"time"`
 	}
 )
 
