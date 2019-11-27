@@ -24,7 +24,7 @@ func (c *Task) Put(option common.TaskOption) (err error) {
 	if option.Start {
 		c.runtime[identity].Start()
 	}
-	return
+	return common.SetTemporary(c.options)
 }
 
 func (c *Task) webhook(identity string, key string) {
