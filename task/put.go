@@ -45,28 +45,41 @@ func (c *Task) webhook(identity string, key string) {
 			for _, value := range errs {
 				message = append(message, value.Error())
 			}
-			//common.Record <- common.RecordError{
-			//	Type:     "error",
-			//	Identity: identity,
-			//	Key:      key,
-			//	Url:      option.Url,
-			//	Header:   option.Headers,
-			//	Body:     option.Body,
-			//	Message:  message,
-			//	Time:     time.Now(),
+			//if (*c.ctx).Value("elastic") != nil {
+			//	es := (*c.ctx).Value("elastic").(*elastic.Elastic)
+			//	err := es.Index(common.RecordError{
+			//		Type:     "error",
+			//		Identity: identity,
+			//		Key:      key,
+			//		Url:      option.Url,
+			//		Header:   option.Headers,
+			//		Body:     option.Body,
+			//		Message:  message,
+			//		Time:     time.Now(),
+			//	});
+			//	if err != nil {
+			//		println(err.Error())
+			//	}
+			//	(*c.ctx).Done()
 			//}
 		} else {
-			println(body)
-			//common.Record <- common.RecordSuccess{
-			//	Type:     "success",
-			//	Identity: identity,
-			//	Key:      key,
-			//	Url:      option.Url,
-			//	Header:   option.Headers,
-			//	Body:     option.Body,
-			//	Response: body,
-			//	Time:     time.Now(),
+			//if (*c.ctx).Value("elastic") != nil {
+			//	es := (*c.ctx).Value("elastic").(*elastic.Elastic)
+			//	err := es.Index(common.RecordSuccess{
+			//		Type:     "success",
+			//		Identity: identity,
+			//		Key:      key,
+			//		Url:      option.Url,
+			//		Header:   option.Headers,
+			//		Body:     option.Body,
+			//		Response: body,
+			//		Time:     time.Now(),
+			//	});
+			//	if err != nil {
+			//		println(err.Error())
+			//	}
 			//}
+			println(body)
 		}
 	})
 	if err != nil {

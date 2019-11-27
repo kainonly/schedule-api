@@ -6,13 +6,13 @@ import (
 )
 
 type router struct {
-	task    *task.Task
 	elastic *elastic.Elastic
+	task    *task.Task
 }
 
-func Init(task *task.Task, elastic *elastic.Elastic) *router {
+func Init(elastic *elastic.Elastic, task *task.Task) *router {
 	return &router{
-		task,
 		elastic,
+		task,
 	}
 }
