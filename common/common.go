@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+var Record chan interface{}
+
 type (
 	TaskOption struct {
 		Identity string                  `json:"identity" validate:"required"`

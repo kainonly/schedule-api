@@ -1,6 +1,7 @@
 package task
 
 import (
+	"encoding/json"
 	"github.com/parnurzeal/gorequest"
 	"github.com/robfig/cron/v3"
 	"schedule-api/common"
@@ -39,47 +40,40 @@ func (c *Task) webhook(identity string, key string) {
 		if option.Body != nil {
 			agent.Send(option.Body)
 		}
-		_, body, errs := agent.End()
+		_, body, errs := agent.EndBytes()
 		if errs != nil {
 			var message []string
 			for _, value := range errs {
 				message = append(message, value.Error())
 			}
-			//if (*c.ctx).Value("elastic") != nil {
-			//	es := (*c.ctx).Value("elastic").(*elastic.Elastic)
-			//	err := es.Index(common.RecordError{
-			//		Type:     "error",
-			//		Identity: identity,
-			//		Key:      key,
-			//		Url:      option.Url,
-			//		Header:   option.Headers,
-			//		Body:     option.Body,
-			//		Message:  message,
-			//		Time:     time.Now(),
-			//	});
-			//	if err != nil {
-			//		println(err.Error())
-			//	}
-			//	(*c.ctx).Done()
-			//}
+			common.Record <- common.RecordError{
+				Type:     "error",
+				Identity: identity,
+				Key:      key,
+				Url:      option.Url,
+				Header:   option.Headers,
+				Body:     option.Body,
+				Message:  message,
+				Time:     time.Now(),
+			}
 		} else {
-			//if (*c.ctx).Value("elastic") != nil {
-			//	es := (*c.ctx).Value("elastic").(*elastic.Elastic)
-			//	err := es.Index(common.RecordSuccess{
-			//		Type:     "success",
-			//		Identity: identity,
-			//		Key:      key,
-			//		Url:      option.Url,
-			//		Header:   option.Headers,
-			//		Body:     option.Body,
-			//		Response: body,
-			//		Time:     time.Now(),
-			//	});
-			//	if err != nil {
-			//		println(err.Error())
-			//	}
-			//}
-			println(body)
+			var response interface{}
+			err := json.Unmarshal(body, &response)
+			if err != nil {
+				println(err.Error())
+			} else {
+				common.Record <- common.RecordSuccess{
+					Type:     "success",
+					Identity: identity,
+					Key:      key,
+					Url:      option.Url,
+					Header:   option.Headers,
+					Body:     option.Body,
+					Response: response,
+					Time:     time.Now(),
+				}
+			}
+
 		}
 	})
 	if err != nil {

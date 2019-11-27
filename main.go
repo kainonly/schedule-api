@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"schedule-api/common"
 	"schedule-api/elastic"
 	"schedule-api/router"
 	"schedule-api/task"
@@ -25,6 +26,7 @@ func main() {
 	app.Logger().SetLevel("debug")
 	app.Use(recover.New())
 	app.Use(logger.New())
+	common.Record = make(chan interface{})
 	routes := router.Init(
 		elastic.Inject(cfg.Section("elasticsearch")),
 		task.Inject(),
