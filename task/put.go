@@ -54,7 +54,7 @@ func (c *Task) webhook(identity string, key string) {
 				Header:   option.Headers,
 				Body:     option.Body,
 				Message:  message,
-				Time:     time.Now(),
+				Time:     time.Now().Unix(),
 			}
 		} else {
 			var response interface{}
@@ -70,10 +70,10 @@ func (c *Task) webhook(identity string, key string) {
 					Header:   option.Headers,
 					Body:     option.Body,
 					Response: response,
-					Time:     time.Now(),
+					Time:     time.Now().Unix(),
 				}
 			}
-
+			println(string(body))
 		}
 	})
 	if err != nil {
