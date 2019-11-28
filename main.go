@@ -6,8 +6,6 @@ import (
 	"github.com/kataras/iris/v12/middleware/recover"
 	"gopkg.in/ini.v1"
 	"log"
-	"net/http"
-	_ "net/http/pprof"
 	"schedule-api/common"
 	"schedule-api/elastic"
 	"schedule-api/router"
@@ -15,15 +13,12 @@ import (
 )
 
 func main() {
-	go func() {
-		http.ListenAndServe(":6060", nil)
-	}()
 	cfg, err := ini.Load("config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	app := iris.New()
-	app.Logger().SetLevel("debug")
+	app.Logger().SetLevel("error")
 	app.Use(recover.New())
 	app.Use(logger.New())
 	common.InitLevelDB("data")

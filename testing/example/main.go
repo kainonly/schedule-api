@@ -1,26 +1,47 @@
 package main
 
 import (
-	"github.com/robfig/cron/v3"
-	"time"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/logger"
+	"github.com/kataras/iris/v12/middleware/recover"
+	"gopkg.in/ini.v1"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
+	"schedule-api/common"
+	"schedule-api/elastic"
+	"schedule-api/router"
+	"schedule-api/task"
 )
 
 func main() {
-	timezone, _ := time.LoadLocation("Asia/Shanghai")
-	task := cron.New(
-		cron.WithSeconds(),
-		cron.WithLocation(timezone),
+	go func() {
+		http.ListenAndServe(":6060", nil)
+	}()
+	cfg, err := ini.Load("config.ini")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	app := iris.New()
+	app.Logger().SetLevel("debug")
+	app.Use(recover.New())
+	app.Use(logger.New())
+	common.InitLevelDB("data")
+	common.Record = make(chan interface{})
+	routes := router.Init(
+		elastic.Inject(cfg.Section("elasticsearch")),
+		task.Inject(),
 	)
-	entryId1, _ := task.AddFunc("*/2 * * * * *", func() {
-		println("every two second")
-	})
-	entryId2, _ := task.AddFunc("*/4 * * * * *", func() {
-		println("every four second")
-	})
-	println(entryId1)
-	println(entryId2)
-	task.Start()
-	println(task.Entry(entryId1).Next.String())
-	time.Sleep(time.Duration(time.Second * 6))
-	task.Stop()
+	app.Post("put", routes.PutRoute)
+	app.Post("get", routes.GetRoute)
+	app.Post("lists", routes.ListsRoute)
+	app.Post("all", routes.AllRoute)
+	app.Post("running", routes.RunningRoute)
+	app.Post("delete", routes.DeleteRoute)
+	app.Post("search", routes.SearchRoute)
+	app.Post("clear", routes.ClearRoute)
+	app.Run(
+		iris.Addr(":3000"),
+		iris.WithoutServerError(iris.ErrServerClosed),
+	)
 }
