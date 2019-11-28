@@ -39,6 +39,7 @@ func main() {
 	app.Post("running", routes.RunningRoute)
 	app.Post("delete", routes.DeleteRoute)
 	app.Post("search", routes.SearchRoute)
+	app.Post("clear", routes.ClearRoute)
 	app.Run(
 		iris.Addr(":3000"),
 		iris.WithoutServerError(iris.ErrServerClosed),

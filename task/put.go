@@ -73,7 +73,6 @@ func (c *Task) webhook(identity string, key string) {
 					Time:     time.Now().Unix(),
 				}
 			}
-			println(string(body))
 		}
 	})
 	if err != nil {

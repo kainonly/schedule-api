@@ -14,12 +14,8 @@ type searchBody struct {
 }
 
 type timeSearchOption struct {
-	Lt  int64 `json:"lt"`
-	Gt  int64 `json:"gt"`
 	Lte int64 `json:"lte"`
 	Gte int64 `json:"gte"`
-	Eq  int64 `json:"eq"`
-	Ne  int64 `json:"ne"`
 }
 
 func (r *router) SearchRoute(ctx iris.Context) {
@@ -35,10 +31,46 @@ func (r *router) SearchRoute(ctx iris.Context) {
 		})
 		return
 	}
+	var must []interface{}
+	if body.Type != "" {
+		must = append(must, map[string]interface{}{
+			"match": map[string]string{
+				"type": body.Type,
+			},
+		})
+	}
+	if body.Identity != "" {
+		must = append(must, map[string]interface{}{
+			"match": map[string]string{
+				"identity": body.Identity,
+			},
+		})
+	}
+	if body.Time != (timeSearchOption{}) {
+		timeRange := make(map[string]int64)
+		if body.Time.Gte != 0 {
+			timeRange["gte"] = body.Time.Gte
+		}
+		if body.Time.Lte != 0 {
+			timeRange["lte"] = body.Time.Lte
+		}
+		must = append(must, map[string]interface{}{
+			"range": map[string]interface{}{
+				"time": timeRange,
+			},
+		})
+	}
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
-			"match": map[string]interface{}{
-				"type": body.Type,
+			"bool": map[string]interface{}{
+				"must": must,
+			},
+		},
+		"size": body.Limit,
+		"from": body.Skip,
+		"sort": map[string]interface{}{
+			"time": map[string]string{
+				"order": "desc",
 			},
 		},
 	}
