@@ -300,114 +300,56 @@ Query the log related to the acquisition task
   - **type** `string` Logging Type, All if not present
     - 'put', 'delete', 'running', 'success', 'error'
   - **identity** `string` Job identity
-  - **time** `object`
-    - **lt** `number` Match fields "less than" this one.
-    - **gt** `number` Match fields "greater than" this one.
+  - **time** `object` unix time range
     - **lte** `number` Match fields "less than or equal to" this one.
     - **gte** `number` Match fields "greater than or equal to" this one.
-    - **eq** `number` Match fields equal to this one.
-    - **ne** `number` Match fields not equal to this one.
   - **limit** `number` Page limit
   - **skip** `number` Page Number
 
-Get Range Logs
+Query time range logs
 
 ```json
 {
-  "identity": "test",
-  "time": {
-    "lt":1571295272000,
-    "gt":1571295271000
-  },
-  "limit": 10,
-  "skip": 0
+  "identity":"test",
+  "limit":20,
+  "skip":0,
+  "time":{
+    "lte":1574903060,
+    "gte":1574902660
+  }
 }
 ```
 
-Put `_source`
+E.g. `_source` log content returned by Put
 
 ```json
 {
-  "type": "put",
-  "identity": "test",
-  "body": {
-    "identity": "test",
-    "cron_time": "* */5 * * * *",
-    "url": "https://api.developer.com/subscription",
-    "time_zone": "Asia/Shanghai",
-    "start": true
+  "type" : "put",
+  "identity" : "test",
+  "body" : {
+    "identity" : "test",
+    "time_zone" : "Asia/Shanghai",
+    "start" : true,
+    "entries" : {
+      "index" : {
+        "cron_time" : "*/5 * * * * *",
+        "url" : "https://api.developer.com",
+        "headers" : null,
+        "body" : null,
+        "next_date" : "0001-01-01T00:00:00Z",
+        "last_date" : "0001-01-01T00:00:00Z"
+      },
+      "subscription" : {
+        "cron_time" : "*/10 * * * * *",
+        "url" : "https://api.developer.com/subscription",
+        "headers" : null,
+        "body" : null,
+        "next_date" : "0001-01-01T00:00:00Z",
+        "last_date" : "0001-01-01T00:00:00Z"
+      }
+    }
   },
-  "action": true,
-  "time": 1571295271483
-}
-```
-
-Delete `_source`
-
-```json
-{
-  "type": "delete",
-  "identity": "test",
-  "body": {
-    "identity": "test"
-  },
-  "action": true,
-  "time": 1571299147117
-}
-```
-
-Running `_source`
-
-```json
-{
-  "type": "running",
-  "identity": "test",
-  "body": {
-    "identity": "test",
-    "running": false
-  },
-  "time": 1571295299629
-}
-```
-
-Success `_source`
-
-```json
-{
-  "type": "success",
-  "identity": "test",
-  "url": "https://api.developer.com/subscription",
-  "headers": {
-    "server": "Tengine",
-    "content-type": "application/json; charset=utf-8",
-    "transfer-encoding": "chunked",
-    "connection": "close",
-    "strict-transport-security": "max-age=5184000",
-    "date": "Thu, 17 Oct 2019 07:05:59 GMT",
-    "vary": "Accept-Encoding",
-    "x-frame-options": "SAMEORIGIN",
-    "x-xss-protection": "1; mode=block",
-    "x-content-type-options": "nosniff",
-    "content-encoding": "gzip",
-    "via": "cache2.l2cn1800[29,0], kunlun2.cn2466[52,0]",
-    "timing-allow-origin": "*",
-    "eagleid": "7ce1a71615712959590353713e"
-  },
-  "body": {
-    "status": 1
-  },
-  "time": 1571295959073
-}
-```
-
-Error `_source`
-
-```json
-{
-  "type": "error",
-  "identity": "test",
-  "message": "Response code 404 (Not Found)",
-  "time": 1571298950112
+  "time" : 1574850559
 }
 ```
 
